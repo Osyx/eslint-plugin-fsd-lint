@@ -25,15 +25,18 @@ export const rules = {
 export const configs = {
   // Recommended configuration
   recommended: {
-    plugins: ['fsd-lint'],
-    rules: {
-      'fsd-lint/forbidden-imports': 'error',
-      'fsd-lint/no-cross-slice-dependency': 'error',
-      'fsd-lint/no-global-store-imports': 'error',
-      'fsd-lint/no-public-api-sidestep': 'error',
-      'fsd-lint/no-relative-imports': 'error',
-      'fsd-lint/no-ui-in-business-logic': 'error',
-      'fsd-lint/ordered-imports': 'warn'
+    plugins: {
+      'fsd-lint': {
+        rules: {
+          'fsd-lint/forbidden-imports': 'error',
+          'fsd-lint/no-cross-slice-dependency': 'error',
+          'fsd-lint/no-global-store-imports': 'error',
+          'fsd-lint/no-public-api-sidestep': 'error',
+          'fsd-lint/no-relative-imports': 'error',
+          'fsd-lint/no-ui-in-business-logic': 'error',
+          'fsd-lint/ordered-imports': 'warn'
+        }
+      }
     }
   },
 
