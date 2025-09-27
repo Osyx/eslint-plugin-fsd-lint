@@ -59,9 +59,9 @@ export default {
 
       const normalizedCurrentPath = normalizePath(currentFilePath);
       // Get the base directory of the current file
-      const currentDir = path.dirname(normalizedCurrentPath);
+      const currentDir = path.posix.dirname(normalizedCurrentPath);
       // Resolve the import path relative to the current file
-      const resolvedImportPath = path.resolve(currentDir, importPath);
+      const resolvedImportPath = path.posix.resolve(currentDir, importPath);
 
       // FSD slice boundaries are typically 2-3 levels deep (e.g., features/auth, entities/user)
       // Extract slice path segments
