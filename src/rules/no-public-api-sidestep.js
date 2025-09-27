@@ -132,7 +132,10 @@ export default {
         const pathParts = normalizedImportPath.split('/');
         const layerIndex = pathParts.findIndex((part) => {
           const normalizedPart = normalizePath(part);
-          return normalizedPart === importLayer || config.layers[importLayer]?.pattern === normalizedPart;
+          // Check if the part contains the layer (e.g., @entities contains entities)
+          return normalizedPart === importLayer || 
+                 normalizedPart.includes(importLayer) || 
+                 config.layers[importLayer]?.pattern === normalizedPart;
         });
 
         // If import only specifies layer and slice, it's considered a public API import
@@ -201,7 +204,10 @@ export default {
           const pathParts = normalizedImportPath.split('/');
           const layerIndex = pathParts.findIndex((part) => {
             const normalizedPart = normalizePath(part);
-            return normalizedPart === importLayer || config.layers[importLayer]?.pattern === normalizedPart;
+            // Check if the part contains the layer (e.g., @entities contains entities)
+            return normalizedPart === importLayer || 
+                   normalizedPart.includes(importLayer) || 
+                   config.layers[importLayer]?.pattern === normalizedPart;
           });
 
           // If import only specifies layer and slice, it's considered a public API import
