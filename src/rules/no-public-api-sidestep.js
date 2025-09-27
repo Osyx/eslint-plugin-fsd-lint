@@ -137,9 +137,13 @@ export default {
 
         // If import only specifies layer and slice, it's considered a public API import
         const isSliceRootImport = layerIndex >= 0 && pathParts.length === layerIndex + 2;
+        
+        // Check if it's importing from a segment level (e.g., @entities/user/model, @entities/user/ui, @entities/user/anySegmentName)
+        // Any segment name is allowed in FSD architecture
+        const isSegmentImport = layerIndex >= 0 && pathParts.length === layerIndex + 3;
 
-        // If either a public API file or slice root, it's valid
-        if (isPublicApiImport || isSliceRootImport) {
+        // If either a public API file, slice root, or segment root, it's valid
+        if (isPublicApiImport || isSliceRootImport || isSegmentImport) {
           return;
         }
 
@@ -202,9 +206,13 @@ export default {
 
           // If import only specifies layer and slice, it's considered a public API import
           const isSliceRootImport = layerIndex >= 0 && pathParts.length === layerIndex + 2;
+          
+          // Check if it's importing from a segment level (e.g., @entities/user/model, @entities/user/ui, @entities/user/anySegmentName)
+          // Any segment name is allowed in FSD architecture
+          const isSegmentImport = layerIndex >= 0 && pathParts.length === layerIndex + 3;
 
-          // If either a public API file or slice root, it's valid
-          if (isPublicApiImport || isSliceRootImport) {
+          // If either a public API file, slice root, or segment root, it's valid
+          if (isPublicApiImport || isSliceRootImport || isSegmentImport) {
             return;
           }
 

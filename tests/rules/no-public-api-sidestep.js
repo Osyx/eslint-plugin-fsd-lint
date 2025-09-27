@@ -90,6 +90,74 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
       code: 'import { User } from "@entities/user/index";',
     },
 
+    // FSD segment imports (any segment name is allowed)
+    {
+      description: 'Import from model segment (OK)',
+      code: 'import { userReducer } from "@entities/user/model";',
+    },
+    {
+      description: 'Import from ui segment (OK)',
+      code: 'import { UserCard } from "@entities/user/ui";',
+    },
+    {
+      description: 'Import from api segment (OK)',
+      code: 'import { fetchUser } from "@entities/user/api";',
+    },
+    {
+      description: 'Import from lib segment (OK)',
+      code: 'import { formatUserName } from "@entities/user/lib";',
+    },
+    {
+      description: 'Import from config segment (OK)',
+      code: 'import { userConfig } from "@entities/user/config";',
+    },
+    {
+      description: 'Import from types segment (OK)',
+      code: 'import type { User } from "@entities/user/types";',
+    },
+    {
+      description: 'Feature model segment import (OK)',
+      code: 'import { authReducer } from "@features/auth/model";',
+    },
+    {
+      description: 'Widget ui segment import (OK)',
+      code: 'import { HeaderComponent } from "@widgets/header/ui";',
+    },
+    
+    // Custom segment names (any name is allowed in FSD)
+    {
+      description: 'Import from custom segment "services" (OK)',
+      code: 'import { UserService } from "@entities/user/services";',
+    },
+    {
+      description: 'Import from custom segment "helpers" (OK)',
+      code: 'import { userHelpers } from "@entities/user/helpers";',
+    },
+    {
+      description: 'Import from custom segment "validators" (OK)',
+      code: 'import { validateUser } from "@entities/user/validators";',
+    },
+    {
+      description: 'Import from custom segment "stores" (OK)',
+      code: 'import { userStore } from "@entities/user/stores";',
+    },
+    {
+      description: 'Import from custom segment "queries" (OK)',
+      code: 'import { getUserQuery } from "@entities/user/queries";',
+    },
+    {
+      description: 'Import from custom segment "mutations" (OK)',
+      code: 'import { updateUserMutation } from "@entities/user/mutations";',
+    },
+    {
+      description: 'Import from custom segment with hyphen (OK)',
+      code: 'import { UserForm } from "@entities/user/form-components";',
+    },
+    {
+      description: 'Import from custom segment with underscore (OK)',
+      code: 'import { userSchema } from "@entities/user/data_schemas";',
+    },
+
     // Test file exceptions
     {
       description: 'Test file with direct import (exception)',
@@ -275,30 +343,25 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
   ],
 
   invalid: [
-    // Direct model imports
+    // Direct internal file imports (deeper than segment level)
     {
-      description: 'Direct import from entity model (Forbidden)',
+      description: 'Direct import from entity model file (Forbidden)',
       code: 'import { userReducer } from "@entities/user/model/slice";',
       errors: [{ messageId: 'noDirectImport' }],
     },
     {
-      description: 'Direct import from feature model (Forbidden)',
+      description: 'Direct import from feature model file (Forbidden)',
       code: 'import { authReducer } from "@features/auth/model/slice";',
       errors: [{ messageId: 'noDirectImport' }],
     },
     {
-      description: 'Direct import from widget model (Forbidden)',
+      description: 'Direct import from widget model file (Forbidden)',
       code: 'import { sidebarReducer } from "@widgets/Sidebar/model/slice";',
       errors: [{ messageId: 'noDirectImport' }],
     },
     {
-      description: 'Direct import from page model (Forbidden)',
+      description: 'Direct import from page model file (Forbidden)',
       code: 'import { homeReducer } from "@pages/home/model/slice";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct import from model directory (Forbidden)',
-      code: 'import { userModel } from "@entities/user/model";',
       errors: [{ messageId: 'noDirectImport' }],
     },
 
@@ -323,11 +386,6 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
       code: 'import { HomePage } from "@pages/home/ui/HomePage";',
       errors: [{ messageId: 'noDirectImport' }],
     },
-    {
-      description: 'Direct import from UI directory (Forbidden)',
-      code: 'import { Button } from "@entities/user/ui";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
 
     // Direct API imports
     {
@@ -350,36 +408,11 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
       code: 'import { fetchHomeData } from "@pages/home/api/homeApi";',
       errors: [{ messageId: 'noDirectImport' }],
     },
-    {
-      description: 'Direct import from API directory (Forbidden)',
-      code: 'import { userApi } from "@entities/user/api";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
 
     // Direct constant imports
     {
       description: 'Direct import from feature constants (Forbidden)',
       code: 'import { LOGIN_FEATURE_KEY } from "@features/auth/model/consts";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct import from entity constants (Forbidden)',
-      code: 'import { USER_ROLES } from "@entities/user/constants";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct import from widget constants (Forbidden)',
-      code: 'import { SIDEBAR_WIDTH } from "@widgets/Sidebar/constants";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct import from page constants (Forbidden)',
-      code: 'import { HOME_PAGE_KEY } from "@pages/home/constants";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct import from constants directory (Forbidden)',
-      code: 'import { userConstants } from "@entities/user/constants";',
       errors: [{ messageId: 'noDirectImport' }],
     },
 
@@ -404,11 +437,6 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
       code: 'import { formatHomeTitle } from "@pages/home/lib/formatters";',
       errors: [{ messageId: 'noDirectImport' }],
     },
-    {
-      description: 'Direct import from utils directory (Forbidden)',
-      code: 'import { userUtils } from "@entities/user/utils";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
 
     // Direct hook imports
     {
@@ -431,11 +459,6 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
       code: 'import { useHome } from "@pages/home/hooks/useHome";',
       errors: [{ messageId: 'noDirectImport' }],
     },
-    {
-      description: 'Direct import from hooks directory (Forbidden)',
-      code: 'import { userHooks } from "@entities/user/hooks";',
-      errors: [{ messageId: 'noDirectImport' }],
-    },
 
     // Direct type imports (when not allowed)
     {
@@ -455,20 +478,6 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
     {
       description: 'Direct type import from API (Forbidden)',
       ...withOptions('import type { UserApiResponse } from "@entities/user/api/userApi";', {
-        allowTypeImports: false,
-      }),
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct type import from constants (Forbidden)',
-      ...withOptions('import type { UserRoles } from "@entities/user/constants";', {
-        allowTypeImports: false,
-      }),
-      errors: [{ messageId: 'noDirectImport' }],
-    },
-    {
-      description: 'Direct type import from utils (Forbidden)',
-      ...withOptions('import type { UserUtils } from "@entities/user/utils";', {
         allowTypeImports: false,
       }),
       errors: [{ messageId: 'noDirectImport' }],
@@ -498,6 +507,23 @@ testRule('no-public-api-sidestep', noPublicApiSidestep, {
     {
       description: 'Dynamic import with destructuring (Forbidden)',
       code: 'const { default: userReducer } = await import("@entities/user/model/slice");',
+      errors: [{ messageId: 'noDirectImport' }],
+    },
+
+    // Custom segment file access (still forbidden to access files inside segments)
+    {
+      description: 'Direct import from custom segment file (Forbidden)',
+      code: 'import { UserService } from "@entities/user/services/UserService";',
+      errors: [{ messageId: 'noDirectImport' }],
+    },
+    {
+      description: 'Direct import from custom segment subfolder (Forbidden)',
+      code: 'import { validateEmail } from "@entities/user/validators/email";',
+      errors: [{ messageId: 'noDirectImport' }],
+    },
+    {
+      description: 'Direct import from nested custom segment (Forbidden)',
+      code: 'import { userQuery } from "@entities/user/queries/getUser.query";',
       errors: [{ messageId: 'noDirectImport' }],
     },
 
