@@ -1,7 +1,25 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+
+// ✅ VALID: Relative import within same slice
 import { setAuthenticated, setError } from '../model/slice';
 import { LoginCredentials } from '../model/types';
+
+// ✅ VALID: Import from entities via public API
+import { User } from '@entities/user';
+
+// ✅ VALID: Import from entities segment level (NEW - flexible segments)
+import { userModel } from '@entities/user/model';
+
+// ✅ VALID: Import from shared via alias
+import { Button } from '@shared/ui/Button';
+
+// ❌ INVALID Examples (commented out to avoid lint errors):
+// import { profileService } from '@features/profile/model/profileService'; // Cross-slice dependency
+// import { HomePage } from '../../../pages/home'; // Relative import to different layer
+// import { userSlice } from '@entities/user/model/slice'; // Public API sidestep
+// import { store } from '@app/store'; // Import from higher layer
+// import { store } from '../../../app/store'; // Direct store import
 
 export const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
