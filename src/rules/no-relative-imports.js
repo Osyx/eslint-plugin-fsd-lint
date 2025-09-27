@@ -50,8 +50,8 @@ export default {
     // Allow type imports if configured
     const allowTypeImports = options.allowTypeImports || false;
 
-    // Allow same slice imports if configured
-    const allowSameSlice = options.allowSameSlice || false;
+    // Allow same slice imports if configured (default: true)
+    const allowSameSlice = options.allowSameSlice !== undefined ? options.allowSameSlice : true;
 
     // Helper function to check if import is within the same slice
     function isSameSlice(importPath, currentFilePath) {
@@ -61,20 +61,58 @@ export default {
       // Get the base directory of the current file
       const currentDir = path.posix.dirname(normalizedCurrentPath);
       // Resolve the import path relative to the current file
-      const resolvedImportPath = path.posix.resolve(currentDir, importPath);
+      const resolvedImportPath = path.posix.normalize(path.posix.resolve(currentDir, importPath));
 
-      // FSD slice boundaries are typically 2-3 levels deep (e.g., features/auth, entities/user)
-      // Extract slice path segments
-      const sliceSegments = normalizedCurrentPath.split('/');
-      // We need at least layer and slice name (e.g., features/auth)
-      if (sliceSegments.length < 4) return false;
-
-      // Get layer and slice (e.g., "features/auth")
-      const layer = sliceSegments[sliceSegments.length - 4]; // Typically "src/features/auth/ui/component.tsx"
-      const slice = sliceSegments[sliceSegments.length - 3];
-
-      // Check if import path is in the same layer/slice
-      return resolvedImportPath.includes(`/${layer}/${slice}/`);
+      // FSD layers we need to check
+      const fsdLayers = ['app', 'processes', 'pages', 'widgets', 'features', 'entities', 'shared'];
+      
+      // Find layer and slice from current file path
+      const currentPathParts = normalizedCurrentPath.split('/');
+      let currentLayer = null;
+      let currentSlice = null;
+      let layerIndex = -1;
+      
+      for (let i = 0; i < currentPathParts.length; i++) {
+        if (fsdLayers.includes(currentPathParts[i])) {
+          currentLayer = currentPathParts[i];
+          layerIndex = i;
+          // The slice is the next part after the layer (if it exists)
+          if (i + 1 < currentPathParts.length) {
+            currentSlice = currentPathParts[i + 1];
+          }
+          break;
+        }
+      }
+      
+      // If we couldn't find a layer, we can't determine if it's same slice
+      if (!currentLayer || layerIndex === -1) return false;
+      
+      // Find layer and slice from resolved import path
+      const resolvedPathParts = resolvedImportPath.split('/');
+      let importLayer = null;
+      let importSlice = null;
+      let importLayerIndex = -1;
+      
+      for (let i = 0; i < resolvedPathParts.length; i++) {
+        if (fsdLayers.includes(resolvedPathParts[i])) {
+          importLayer = resolvedPathParts[i];
+          importLayerIndex = i;
+          // The slice is the next part after the layer (if it exists)
+          if (i + 1 < resolvedPathParts.length) {
+            importSlice = resolvedPathParts[i + 1];
+          }
+          break;
+        }
+      }
+      
+      // If we couldn't find a layer in the import, it might be within the same slice
+      if (!importLayer || importLayerIndex === -1) {
+        // Check if the resolved path is still within the current layer/slice structure
+        return resolvedImportPath.includes(`/${currentLayer}/${currentSlice}/`);
+      }
+      
+      // Check if both layer and slice match
+      return currentLayer === importLayer && currentSlice === importSlice;
     }
 
     return {

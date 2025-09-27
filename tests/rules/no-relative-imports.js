@@ -26,6 +26,29 @@ testRule('no-relative-imports', noRelativeImports, {
         'src/entities/article/ui/components/ArticleList/ArticleItem/ArticleItem.tsx'
       ),
     },
+    // Bug fix test cases for multi-level relative imports within same slice
+    {
+      description: 'Two-level relative import within same entity slice (OK)',
+      ...withFilename('import { fetchUserApi } from "../../api";', 'src/entities/user/components/Card/Card.tsx'),
+    },
+    {
+      description: 'Two-level relative import to api folder within same entity (OK)',
+      ...withFilename('import { userApi } from "../../api/userApi";', 'src/entities/user/components/Card/index.ts'),
+    },
+    {
+      description: 'Three-level relative import within same feature slice (OK)',
+      ...withFilename(
+        'import { authApi } from "../../../api";',
+        'src/features/auth/ui/components/LoginButton/LoginButton.tsx'
+      ),
+    },
+    {
+      description: 'Multi-level relative import in deeply nested component (OK)',
+      ...withFilename(
+        'import { userModel } from "../../../../model";',
+        'src/entities/user/ui/components/UserList/UserCard/UserAvatar/UserAvatar.tsx'
+      ),
+    },
     {
       description: 'Relative import to sibling component (OK)',
       ...withFilename('import { Input } from "../Input";', 'src/shared/ui/Button/Button.tsx'),
@@ -196,19 +219,19 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Relative path import to different feature slice (Forbidden)',
       code: 'import { User } from "../../entities/user/model/user";',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to another feature slice (Forbidden)',
       code: 'import { ProfileForm } from "../../profile/ui/ProfileForm";',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to feature model (Forbidden)',
       code: 'import { authReducer } from "../../auth/model/slice";',
       filename: 'src/features/profile/ui/ProfilePage.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Entity layer imports
@@ -216,19 +239,19 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Relative path import to different entity slice (Forbidden)',
       code: 'import { Article } from "../../article/model/article";',
       filename: 'src/entities/user/model/user.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to entity UI (Forbidden)',
       code: 'import { UserCard } from "../../user/ui/UserCard";',
       filename: 'src/entities/profile/ui/ProfileCard.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to entity API (Forbidden)',
       code: 'import { fetchUserById } from "../../user/api/userApi";',
       filename: 'src/entities/profile/api/profileApi.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Widget layer imports
@@ -236,19 +259,19 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Relative path import to different widget slice (Forbidden)',
       code: 'import { Header } from "../../header/ui/Header";',
       filename: 'src/widgets/footer/ui/Footer.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to widget model (Forbidden)',
       code: 'import { headerReducer } from "../../header/model/slice";',
       filename: 'src/widgets/footer/model/footerSlice.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to widget API (Forbidden)',
       code: 'import { fetchHeaderData } from "../../header/api/headerApi";',
       filename: 'src/widgets/footer/api/footerApi.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Cross-layer imports
@@ -256,31 +279,31 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Relative path import to different layer (Forbidden)',
       code: 'import { LoginForm } from "../../../features/auth/ui/LoginForm";',
       filename: 'src/widgets/Header/ui/Header.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to higher layer (Forbidden)',
       code: 'import { ProfilePage } from "../../pages/profile/ui/ProfilePage";',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import to lower layer (Forbidden)',
       code: 'import { Button } from "../../shared/ui/Button";',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import from entity to feature (Forbidden)',
       code: 'import { authService } from "../../auth/model/service";',
       filename: 'src/entities/user/model/userService.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Relative path import from widget to entity (Forbidden)',
       code: 'import { User } from "../../user/model/user";',
       filename: 'src/widgets/header/ui/Header.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Path variations
@@ -288,19 +311,19 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Multi-level relative path to different slice (Forbidden)',
       code: 'import { User } from "../../../../entities/user/model/user";',
       filename: 'src/features/auth/ui/components/LoginButton.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Windows path with forbidden relative import',
       code: 'import { userModel } from "..\\..\\entities\\user\\model\\user";',
       filename: 'src\\features\\auth\\ui\\LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Mixed path separators (Forbidden)',
       code: 'import { userModel } from "..\\../entities/user/model/user";',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Folder pattern variations
@@ -317,7 +340,7 @@ testRule('no-relative-imports', noRelativeImports, {
           },
         },
       ],
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'With custom folder pattern (Forbidden)',
@@ -332,7 +355,7 @@ testRule('no-relative-imports', noRelativeImports, {
           },
         },
       ],
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Dynamic imports
@@ -340,19 +363,19 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Dynamic import to different slice (Forbidden)',
       code: 'const { User } = await import("../../entities/user/model/user");',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Dynamic import to different layer (Forbidden)',
       code: 'const { LoginForm } = await import("../../../features/auth/ui/LoginForm");',
       filename: 'src/widgets/Header/ui/Header.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Dynamic import with type assertion (Forbidden)',
       code: 'const { User } = await import("../../entities/user/model/user") as { User: typeof User };',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Type imports
@@ -360,13 +383,13 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Type import to different slice (Forbidden)',
       code: 'import type { UserState } from "../../entities/user/model/types";',
       filename: 'src/features/auth/ui/LoginForm.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Type import to different layer (Forbidden)',
       code: 'import type { LoginFormProps } from "../../../features/auth/ui/LoginForm";',
       filename: 'src/widgets/Header/ui/Header.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Real-world scenarios
@@ -374,19 +397,19 @@ testRule('no-relative-imports', noRelativeImports, {
       description: 'Import from hooks directory in different slice (Forbidden)',
       code: 'import { useUser } from "../../user/model/hooks";',
       filename: 'src/entities/profile/model/profileHooks.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Import from styles in different slice (Forbidden)',
       code: 'import styles from "../../auth/ui/styles.module.css";',
       filename: 'src/features/profile/ui/ProfilePage.tsx',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
     {
       description: 'Import from config in different slice (Forbidden)',
       code: 'import { API_CONFIG } from "../../auth/config";',
       filename: 'src/features/profile/config/profileConfig.ts',
-      errors: [{ messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }],
     },
 
     // Complex scenarios
@@ -398,7 +421,7 @@ testRule('no-relative-imports', noRelativeImports, {
         const { authService } = await import("../../auth/model/service");
       `,
       filename: 'src/features/profile/model/profileService.ts',
-      errors: [{ messageId: 'noRelativePath' }, { messageId: 'noRelativePath' }, { messageId: 'noRelativePath' }],
+      errors: [{ messageId: 'noRelativeImport' }, { messageId: 'noRelativeImport' }, { messageId: 'noRelativeImport' }],
     },
   ],
 });
