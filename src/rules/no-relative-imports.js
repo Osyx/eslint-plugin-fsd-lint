@@ -66,6 +66,9 @@ export default {
       // FSD layers we need to check
       const fsdLayers = ['app', 'processes', 'pages', 'widgets', 'features', 'entities', 'shared'];
       
+      // Layers that don't have slices (single-layer modules)
+      const singleLayerModules = ['app', 'shared'];
+      
       // Find layer and slice from current file path
       const currentPathParts = normalizedCurrentPath.split('/');
       let currentLayer = null;
@@ -76,8 +79,8 @@ export default {
         if (fsdLayers.includes(currentPathParts[i])) {
           currentLayer = currentPathParts[i];
           layerIndex = i;
-          // The slice is the next part after the layer (if it exists)
-          if (i + 1 < currentPathParts.length) {
+          // The slice is the next part after the layer (if it exists and layer has slices)
+          if (i + 1 < currentPathParts.length && !singleLayerModules.includes(currentLayer)) {
             currentSlice = currentPathParts[i + 1];
           }
           break;
@@ -86,6 +89,12 @@ export default {
       
       // If we couldn't find a layer, we can't determine if it's same slice
       if (!currentLayer || layerIndex === -1) return false;
+      
+      // For single-layer modules (app, shared), any import within the layer is allowed
+      if (singleLayerModules.includes(currentLayer)) {
+        // Check if the resolved import is within the same layer
+        return resolvedImportPath.includes(`/${currentLayer}/`);
+      }
       
       // Find layer and slice from resolved import path
       const resolvedPathParts = resolvedImportPath.split('/');
@@ -97,8 +106,8 @@ export default {
         if (fsdLayers.includes(resolvedPathParts[i])) {
           importLayer = resolvedPathParts[i];
           importLayerIndex = i;
-          // The slice is the next part after the layer (if it exists)
-          if (i + 1 < resolvedPathParts.length) {
+          // The slice is the next part after the layer (if it exists and layer has slices)
+          if (i + 1 < resolvedPathParts.length && !singleLayerModules.includes(importLayer)) {
             importSlice = resolvedPathParts[i + 1];
           }
           break;
@@ -108,7 +117,17 @@ export default {
       // If we couldn't find a layer in the import, it might be within the same slice
       if (!importLayer || importLayerIndex === -1) {
         // Check if the resolved path is still within the current layer/slice structure
-        return resolvedImportPath.includes(`/${currentLayer}/${currentSlice}/`);
+        if (currentSlice) {
+          return resolvedImportPath.includes(`/${currentLayer}/${currentSlice}/`);
+        } else {
+          // For single-layer modules without slices
+          return resolvedImportPath.includes(`/${currentLayer}/`);
+        }
+      }
+      
+      // For single-layer modules, just check if layers match
+      if (singleLayerModules.includes(currentLayer) || singleLayerModules.includes(importLayer)) {
+        return currentLayer === importLayer;
       }
       
       // Check if both layer and slice match
