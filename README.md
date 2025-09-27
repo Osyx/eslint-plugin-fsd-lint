@@ -336,16 +336,20 @@ import { Button } from '@/shared/ui/Button';
 ### 3️⃣ fsd/no-public-api-sidestep
 
 Prevents direct imports from internal modules of features, widgets, or entities. <br/>
-✅ Allowed: Importing from index.ts (public API) <br/>
-❌ Not Allowed: Importing a feature's internal file <br/>
+✅ Allowed: Importing from index.ts (public API) or segment level <br/>
+❌ Not Allowed: Importing internal files within segments <br/>
 
 ```javascript
-// ❌ Incorrect (direct internal import)
-import { authSlice } from '../../features/auth/slice.ts';
-
 // ✅ Correct (importing via public API)
 import { authSlice } from '../../features/auth';
+import { userModel } from '@entities/user/model';  // Segment level is allowed
+
+// ❌ Incorrect (direct internal import)
+import { authSlice } from '../../features/auth/slice.ts';
+import { userSlice } from '@entities/user/model/slice';  // Internal file not allowed
 ```
+
+**Note:** Any segment name is allowed (not limited to model/ui/api/lib). This provides flexibility for teams to define their own segment structure.
 
 <br/>
 

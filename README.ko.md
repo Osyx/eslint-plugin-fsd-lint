@@ -336,16 +336,20 @@ import { Button } from '@/shared/ui/Button';
 ### 3️⃣ fsd/no-public-api-sidestep
 
 features, widgets, entities의 내부 모듈을 직접 import하지 못하도록 합니다.  
-✅ 허용: index.ts(공개 API)를 통한 import  
-❌ 금지: feature 내부 파일에 직접 접근
+✅ 허용: index.ts(공개 API) 또는 세그먼트 레벨을 통한 import  
+❌ 금지: 세그먼트 내부 파일에 직접 접근
 
 ```javascript
-// ❌ 잘못된 예 (feature 내부 파일 직접 import)
-import { authSlice } from '../../features/auth/slice.ts';
-
 // ✅ 올바른 예 (공개 API를 통해 import)
 import { authSlice } from '../../features/auth';
+import { userModel } from '@entities/user/model';  // 세그먼트 레벨은 허용
+
+// ❌ 잘못된 예 (내부 파일 직접 import)
+import { authSlice } from '../../features/auth/slice.ts';
+import { userSlice } from '@entities/user/model/slice';  // 내부 파일은 허용되지 않음
 ```
+
+**참고:** 모든 세그먼트 이름이 허용됩니다 (model/ui/api/lib에 제한되지 않음). 이는 팀이 자체적인 세그먼트 구조를 정의할 수 있는 유연성을 제공합니다.
 
 <br/>
 
