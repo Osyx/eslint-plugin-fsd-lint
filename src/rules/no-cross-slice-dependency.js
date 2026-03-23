@@ -29,6 +29,7 @@ export default {
       {
         type: 'object',
         properties: {
+          rootPath: { type: 'string' },
           featuresOnly: {
             type: 'boolean',
             description: 'If true, only check dependencies between feature slices',

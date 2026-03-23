@@ -153,6 +153,7 @@ export default [
       'fsd/forbidden-imports': [
         'error',
         {
+          rootPath: '/src/root/',
           // @shared 또는 @/shared 형식 모두 지원
           alias: {
             value: '@',

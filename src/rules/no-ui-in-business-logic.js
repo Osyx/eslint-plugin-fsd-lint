@@ -19,6 +19,7 @@ export default {
       {
         type: 'object',
         properties: {
+          rootPath: { type: 'string' },
           testFilesPatterns: {
             type: 'array',
             items: { type: 'string' },

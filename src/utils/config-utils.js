@@ -10,6 +10,9 @@ export const defaultConfig = {
     withSlash: false  // Default to @shared format
   },
 
+  // Default root path
+  rootPath: "/src/",
+
   // Layer definitions and priorities
   layers: {
     app: { pattern: "app", priority: 1, allowedToImport: ["processes", "pages", "widgets", "features", "entities", "shared"] },
@@ -116,10 +119,14 @@ export function mergeConfig(userConfig = {}) {
     ...(userConfig.relativePath || {})
   };
 
+  // Merge root path
+  const rootPath = userConfig.rootPath || defaultConfig.rootPath;
+
   // Return final configuration
   return {
     alias,
     layers,
+    rootPath,
     folderPattern,
     testFilesPatterns,
     publicApi,
