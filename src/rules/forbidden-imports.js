@@ -21,6 +21,7 @@ export default {
         type: "object",
         properties: {
           alias: {
+            rootPath: { type: "string" },
             oneOf: [
               { type: "string" },
               {

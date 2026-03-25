@@ -117,7 +117,7 @@ export function extractLayerFromImportPath(importPath, config) {
  * @return {string|null} - Extracted layer name or null
  */
 export function extractLayerFromPath(filePath, config) {
-  const relativePath = getRelativePathFromRoot(filePath);
+  const relativePath = getRelativePathFromRoot(filePath, config.rootPath);
   if (!relativePath) return null;
 
   const firstDir = relativePath.split('/')[0];

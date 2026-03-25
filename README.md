@@ -153,6 +153,8 @@ export default [
       'fsd/forbidden-imports': [
         'error',
         {
+          // Support for custom root directory
+          rootPath: '/src/root/',
           // Support for @shared or @/shared import styles
           alias: {
             value: '@',
