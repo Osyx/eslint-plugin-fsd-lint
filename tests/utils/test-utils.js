@@ -1,13 +1,14 @@
 /**
  * @fileoverview ESLint rule testing utilities
  */
-import { describe, it, expect } from "vitest";
+import { describe, it } from "vitest";
 import { RuleTester } from "eslint";
+import tsParser from "@typescript-eslint/parser";
 
 // ESLint RuleTester configuration
 export const ruleTester = new RuleTester({
-  parser: require.resolve("@typescript-eslint/parser"),
-  parserOptions: {
+  languageOptions: {
+    parser: tsParser,
     ecmaVersion: 2022,
     sourceType: "module",
   },

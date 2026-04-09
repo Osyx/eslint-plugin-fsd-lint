@@ -3,7 +3,6 @@
  */
 
 import {
-  extractLayerFromPath,
   extractLayerFromImportPath,
   normalizePath,
   isTestFile,
