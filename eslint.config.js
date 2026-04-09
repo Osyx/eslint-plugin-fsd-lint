@@ -1,5 +1,5 @@
 import eslint from "@eslint/js";
-import globals from 'globals';
+import globals from "globals";
 
 export default [
   {
@@ -9,8 +9,8 @@ export default [
   {
     languageOptions: {
       globals: {
-        ...globals.nodeBuiltin
-      }
-    }
+        ...globals.nodeBuiltin,
+      },
+    },
   },
 ];
