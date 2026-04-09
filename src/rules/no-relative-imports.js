@@ -2,9 +2,9 @@
  * @fileoverview Prevents relative imports between slices. All imports should use absolute paths with aliases.
  */
 
-import { isRelativePath, isTestFile, normalizePath } from '../utils/path-utils.js';
-import { mergeConfig } from '../utils/config-utils.js';
 import path from 'path';
+import { mergeConfig } from '../utils/config-utils.js';
+import { isRelativePath, isTestFile, normalizePath } from '../utils/path-utils.js';
 
 export default {
   meta: {
@@ -65,16 +65,16 @@ export default {
 
       // FSD layers we need to check
       const fsdLayers = ['app', 'processes', 'pages', 'widgets', 'features', 'entities', 'shared'];
-      
+
       // Layers that don't have slices (single-layer modules)
       const singleLayerModules = ['app', 'shared'];
-      
+
       // Find layer and slice from current file path
       const currentPathParts = normalizedCurrentPath.split('/');
       let currentLayer = null;
       let currentSlice = null;
       let layerIndex = -1;
-      
+
       for (let i = 0; i < currentPathParts.length; i++) {
         if (fsdLayers.includes(currentPathParts[i])) {
           currentLayer = currentPathParts[i];
@@ -86,22 +86,22 @@ export default {
           break;
         }
       }
-      
+
       // If we couldn't find a layer, we can't determine if it's same slice
       if (!currentLayer || layerIndex === -1) return false;
-      
+
       // For single-layer modules (app, shared), any import within the layer is allowed
       if (singleLayerModules.includes(currentLayer)) {
         // Check if the resolved import is within the same layer
         return resolvedImportPath.includes(`/${currentLayer}/`);
       }
-      
+
       // Find layer and slice from resolved import path
       const resolvedPathParts = resolvedImportPath.split('/');
       let importLayer = null;
       let importSlice = null;
       let importLayerIndex = -1;
-      
+
       for (let i = 0; i < resolvedPathParts.length; i++) {
         if (fsdLayers.includes(resolvedPathParts[i])) {
           importLayer = resolvedPathParts[i];
@@ -113,7 +113,7 @@ export default {
           break;
         }
       }
-      
+
       // If we couldn't find a layer in the import, it might be within the same slice
       if (!importLayer || importLayerIndex === -1) {
         // Check if the resolved path is still within the current layer/slice structure
@@ -124,12 +124,12 @@ export default {
           return resolvedImportPath.includes(`/${currentLayer}/`);
         }
       }
-      
+
       // For single-layer modules, just check if layers match
       if (singleLayerModules.includes(currentLayer) || singleLayerModules.includes(importLayer)) {
         return currentLayer === importLayer;
       }
-      
+
       // Check if both layer and slice match
       return currentLayer === importLayer && currentSlice === importSlice;
     }
@@ -144,7 +144,7 @@ export default {
         }
 
         // Skip test files
-        if (isTestFile(context.getFilename(), config.testFilesPatterns)) {
+        if (isTestFile(context.filename, config.testFilesPatterns)) {
           return;
         }
 
@@ -164,7 +164,7 @@ export default {
         }
 
         // Skip same slice imports if configured
-        if (allowSameSlice && isSameSlice(importPath, context.getFilename())) {
+        if (allowSameSlice && isSameSlice(importPath, context.filename)) {
           return;
         }
 
@@ -184,7 +184,7 @@ export default {
           }
 
           // Skip test files
-          if (isTestFile(context.getFilename(), config.testFilesPatterns)) {
+          if (isTestFile(context.filename, config.testFilesPatterns)) {
             return;
           }
 
@@ -202,7 +202,7 @@ export default {
           // as that information is not available at parse time
 
           // Skip same slice imports if configured
-          if (allowSameSlice && isSameSlice(importPath, context.getFilename())) {
+          if (allowSameSlice && isSameSlice(importPath, context.filename)) {
             return;
           }
 
