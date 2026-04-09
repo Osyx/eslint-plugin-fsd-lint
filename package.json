@@ -9,7 +9,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "eslint",
@@ -24,6 +26,7 @@
     "@typescript-eslint/parser": "^8.25.0",
     "@vitest/ui": "^3.0.7",
     "eslint": "^9.21.0",
+    "prettier": "3.8.1",
     "vitest": "^3.0.7"
   },
   "peerDependencies": {

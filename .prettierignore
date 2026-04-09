@@ -1,0 +1,5 @@
+# Ignore artifacts:
+.github
+html
+node_modules
+package-lock.json
