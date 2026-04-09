@@ -2,19 +2,25 @@
  * @fileoverview Layer imports rule - Enforces layer dependency direction in FSD architecture
  */
 
-import { extractLayerFromPath, extractLayerFromImportPath, isTestFile, normalizePath } from '../utils/path-utils.js';
-import { mergeConfig } from '../utils/config-utils.js';
+import {
+  extractLayerFromPath,
+  extractLayerFromImportPath,
+  isTestFile,
+  normalizePath,
+} from "../utils/path-utils.js";
+import { mergeConfig } from "../utils/config-utils.js";
 
 export default {
   meta: {
     type: "problem",
     docs: {
-      description: "Prevents imports from higher layers and cross-imports between slices.",
+      description:
+        "Prevents imports from higher layers and cross-imports between slices.",
       recommended: true,
     },
     messages: {
       invalidImport:
-        "🚨 '{{ fromLayer }}' layer cannot import from '{{ toLayer }}' layer. Allowed imports: {{ allowedLayers }}"
+        "🚨 '{{ fromLayer }}' layer cannot import from '{{ toLayer }}' layer. Allowed imports: {{ allowedLayers }}",
     },
     schema: [
       {
@@ -28,12 +34,12 @@ export default {
                 type: "object",
                 properties: {
                   value: { type: "string" },
-                  withSlash: { type: "boolean" }
+                  withSlash: { type: "boolean" },
                 },
                 required: ["value"],
-                additionalProperties: false
-              }
-            ]
+                additionalProperties: false,
+              },
+            ],
           },
           layers: {
             type: "object",
@@ -44,33 +50,33 @@ export default {
                 priority: { type: "number" },
                 allowedToImport: {
                   type: "array",
-                  items: { type: "string" }
-                }
+                  items: { type: "string" },
+                },
               },
-              additionalProperties: false
-            }
+              additionalProperties: false,
+            },
           },
           folderPattern: {
             type: "object",
             properties: {
               enabled: { type: "boolean" },
               regex: { type: "string" },
-              extractionGroup: { type: "number" }
+              extractionGroup: { type: "number" },
             },
-            additionalProperties: false
+            additionalProperties: false,
           },
           testFilesPatterns: {
             type: "array",
-            items: { type: "string" }
+            items: { type: "string" },
           },
           ignoreImportPatterns: {
             type: "array",
-            items: { type: "string" }
-          }
+            items: { type: "string" },
+          },
         },
-        additionalProperties: false
-      }
-    ]
+        additionalProperties: false,
+      },
+    ],
   },
 
   create(context) {
@@ -89,7 +95,7 @@ export default {
         }
 
         // Check for ignored patterns
-        const isIgnored = config.ignoreImportPatterns.some(pattern => {
+        const isIgnored = config.ignoreImportPatterns.some((pattern) => {
           const regex = new RegExp(pattern);
           return regex.test(importPath);
         });
@@ -124,11 +130,11 @@ export default {
             data: {
               fromLayer,
               toLayer,
-              allowedLayers: allowedToImport.join(', ')
-            }
+              allowedLayers: allowedToImport.join(", "),
+            },
           });
         }
-      }
+      },
     };
-  }
+  },
 };

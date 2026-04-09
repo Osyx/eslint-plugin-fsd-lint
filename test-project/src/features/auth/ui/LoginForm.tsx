@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 // ✅ VALID: Relative import within same slice
-import { setAuthenticated, setError } from '../model/slice';
-import { LoginCredentials } from '../model/types';
+import { setAuthenticated, setError } from "../model/slice";
+import { LoginCredentials } from "../model/types";
 
 // ✅ VALID: Import from entities via public API
-import { User } from '@entities/user';
+import { User } from "@entities/user";
 
 // ✅ VALID: Import from entities segment level (NEW - flexible segments)
-import { userModel } from '@entities/user/model';
+import { userModel } from "@entities/user/model";
 
 // ✅ VALID: Import from shared via alias
-import { Button } from '@shared/ui/Button';
+import { Button } from "@shared/ui/Button";
 
 // ❌ INVALID Examples (commented out to avoid lint errors):
 // import { profileService } from '@features/profile/model/profileService'; // Cross-slice dependency
@@ -24,8 +24,8 @@ import { Button } from '@shared/ui/Button';
 export const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
   const [credentials, setCredentials] = useState<LoginCredentials>({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,10 +35,10 @@ export const LoginForm: React.FC = () => {
       if (credentials.email && credentials.password) {
         dispatch(setAuthenticated(true));
       } else {
-        dispatch(setError('이메일과 비밀번호를 입력해주세요.'));
+        dispatch(setError("이메일과 비밀번호를 입력해주세요."));
       }
     } catch (error) {
-      dispatch(setError('로그인 중 오류가 발생했습니다.'));
+      dispatch(setError("로그인 중 오류가 발생했습니다."));
     }
   };
 
@@ -50,7 +50,9 @@ export const LoginForm: React.FC = () => {
           type="email"
           id="email"
           value={credentials.email}
-          onChange={(e) => setCredentials((prev) => ({ ...prev, email: e.target.value }))}
+          onChange={(e) =>
+            setCredentials((prev) => ({ ...prev, email: e.target.value }))
+          }
         />
       </div>
       <div>
@@ -59,7 +61,9 @@ export const LoginForm: React.FC = () => {
           type="password"
           id="password"
           value={credentials.password}
-          onChange={(e) => setCredentials((prev) => ({ ...prev, password: e.target.value }))}
+          onChange={(e) =>
+            setCredentials((prev) => ({ ...prev, password: e.target.value }))
+          }
         />
       </div>
       <button type="submit">로그인</button>

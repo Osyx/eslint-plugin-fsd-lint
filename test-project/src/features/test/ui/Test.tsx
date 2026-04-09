@@ -1,1 +1,1 @@
-import { TestState } from '../model/types';
+import { TestState } from "../model/types";

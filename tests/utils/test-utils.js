@@ -1,15 +1,15 @@
 /**
  * @fileoverview ESLint rule testing utilities
  */
-import { describe, it, expect } from 'vitest';
-import { RuleTester } from 'eslint';
+import { describe, it, expect } from "vitest";
+import { RuleTester } from "eslint";
 
 // ESLint RuleTester configuration
 export const ruleTester = new RuleTester({
-  parser: require.resolve('@typescript-eslint/parser'),
+  parser: require.resolve("@typescript-eslint/parser"),
   parserOptions: {
     ecmaVersion: 2022,
-    sourceType: 'module',
+    sourceType: "module",
   },
 });
 
@@ -41,14 +41,14 @@ export function withOptions(testCase, options) {
  */
 export function testRule(ruleName, rule, tests) {
   describe(ruleName, () => {
-    it('valid cases', () => {
+    it("valid cases", () => {
       tests.valid.forEach((test, index) => {
         const testDescription = test.description || `valid case #${index + 1}`;
 
         try {
           ruleTester.run(`${ruleName}_valid_${index}`, rule, {
             valid: [test],
-            invalid: []
+            invalid: [],
           });
         } catch (error) {
           console.error(`Test failed: ${testDescription}`);
@@ -57,14 +57,15 @@ export function testRule(ruleName, rule, tests) {
       });
     });
 
-    it('invalid cases', () => {
+    it("invalid cases", () => {
       tests.invalid.forEach((test, index) => {
-        const testDescription = test.description || `invalid case #${index + 1}`;
+        const testDescription =
+          test.description || `invalid case #${index + 1}`;
 
         try {
           ruleTester.run(`${ruleName}_invalid_${index}`, rule, {
             valid: [],
-            invalid: [test]
+            invalid: [test],
           });
         } catch (error) {
           console.error(`Test failed: ${testDescription}`);

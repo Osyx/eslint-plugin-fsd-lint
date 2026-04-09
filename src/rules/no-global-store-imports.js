@@ -2,19 +2,20 @@
  * @fileoverview Disallows direct imports of global state (store). Use hooks or selectors instead.
  */
 
-import { normalizePath, isTestFile } from '../utils/path-utils.js';
-import { mergeConfig } from '../utils/config-utils.js';
+import { normalizePath, isTestFile } from "../utils/path-utils.js";
+import { mergeConfig } from "../utils/config-utils.js";
 
 export default {
   meta: {
     type: "problem",
     docs: {
-      description: "Disallows direct imports of global state (store). Use hooks like useStore or useSelector instead.",
+      description:
+        "Disallows direct imports of global state (store). Use hooks like useStore or useSelector instead.",
       recommended: true,
     },
     messages: {
       noGlobalStore:
-        "🚨 '{{ storeName }}' cannot be directly imported. Use hooks such as useStore or useSelector instead."
+        "🚨 '{{ storeName }}' cannot be directly imported. Use hooks such as useStore or useSelector instead.",
     },
     schema: [
       {
@@ -23,21 +24,22 @@ export default {
           forbiddenPaths: {
             type: "array",
             items: { type: "string" },
-            description: "Paths that should not be directly imported (default: ['/app/store', '/shared/store'])"
+            description:
+              "Paths that should not be directly imported (default: ['/app/store', '/shared/store'])",
           },
           allowedPaths: {
             type: "array",
             items: { type: "string" },
-            description: "Paths that are exceptions to the forbidden paths"
+            description: "Paths that are exceptions to the forbidden paths",
           },
           testFilesPatterns: {
             type: "array",
-            items: { type: "string" }
-          }
+            items: { type: "string" },
+          },
         },
-        additionalProperties: false
-      }
-    ]
+        additionalProperties: false,
+      },
+    ],
   },
 
   create(context) {
@@ -47,13 +49,13 @@ export default {
 
     // Default forbidden store paths
     const forbiddenPaths = options.forbiddenPaths || [
-      '/app/store',
-      '/shared/store',
-      '/store/',
-      '/redux/',
-      '/zustand/',
-      '/mobx/',
-      '/recoil/'
+      "/app/store",
+      "/shared/store",
+      "/store/",
+      "/redux/",
+      "/zustand/",
+      "/mobx/",
+      "/recoil/",
     ];
 
     // Paths that are exceptions to the rule
@@ -70,23 +72,25 @@ export default {
         }
 
         // Skip if import is in the allowed paths list
-        if (allowedPaths.some(path => importPath.includes(path))) {
+        if (allowedPaths.some((path) => importPath.includes(path))) {
           return;
         }
 
         // Check if import includes any forbidden path
-        const isForbidden = forbiddenPaths.some(path => importPath.includes(path));
+        const isForbidden = forbiddenPaths.some((path) =>
+          importPath.includes(path),
+        );
 
         if (isForbidden) {
           context.report({
             node,
             messageId: "noGlobalStore",
             data: {
-              storeName: importPath
-            }
+              storeName: importPath,
+            },
           });
         }
-      }
+      },
     };
-  }
+  },
 };
