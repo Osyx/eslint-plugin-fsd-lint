@@ -2,8 +2,8 @@
  * @fileoverview Enforces ordered imports by Feature-Sliced Design (FSD) layers
  */
 
-import { extractLayerFromImportPath } from "../utils/path-utils.js";
-import { mergeConfig } from "../utils/config-utils.js";
+import { mergeConfig } from '../utils/config-utils.js';
+import { extractLayerFromImportPath } from '../utils/path-utils.js';
 
 export default {
   meta: {
@@ -74,7 +74,7 @@ export default {
           return;
         }
 
-        const sourceCode = context.sourceCode || context.getSourceCode();
+        const sourceCode = context.sourceCode;
         const sourceText = sourceCode.getText();
         const sourceLines = sourceText.split("\n");
 

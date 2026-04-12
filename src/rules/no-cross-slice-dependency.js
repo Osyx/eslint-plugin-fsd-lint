@@ -2,15 +2,15 @@
  * @fileoverview Prevents direct dependencies between slices in the same layer. Each slice should be isolated.
  */
 
+import { mergeConfig } from '../utils/config-utils.js';
 import {
-  extractLayerFromPath,
-  extractLayerFromImportPath,
-  extractSliceFromPath,
-  isTestFile,
-  normalizePath,
-  isRelativePath,
-} from "../utils/path-utils.js";
-import { mergeConfig } from "../utils/config-utils.js";
+    extractLayerFromImportPath,
+    extractLayerFromPath,
+    extractSliceFromPath,
+    isRelativePath,
+    isTestFile,
+    normalizePath,
+} from '../utils/path-utils.js';
 
 export default {
   meta: {
@@ -79,7 +79,7 @@ export default {
 
     return {
       ImportDeclaration(node) {
-        const filePath = normalizePath(context.getFilename());
+        const filePath = normalizePath(context.filename);
         const importPath = node.source.value;
 
         // Skip test files
@@ -294,7 +294,7 @@ export default {
           }
 
           // Skip test files
-          if (isTestFile(context.getFilename(), config.testFilesPatterns)) {
+          if (isTestFile(context.filename, config.testFilesPatterns)) {
             return;
           }
 
@@ -309,7 +309,7 @@ export default {
           }
 
           // Extract current file's layer
-          const fromLayer = extractLayerFromPath(context.getFilename(), config);
+          const fromLayer = extractLayerFromPath(context.filename, config);
 
           // Skip excluded layers
           if (!fromLayer || excludeLayers.has(fromLayer)) {
@@ -322,7 +322,7 @@ export default {
           }
 
           // Extract current file's slice
-          const fromSlice = extractSliceFromPath(context.getFilename(), config);
+          const fromSlice = extractSliceFromPath(context.filename, config);
           if (!fromSlice) {
             return;
           }

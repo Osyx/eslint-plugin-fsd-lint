@@ -2,8 +2,8 @@
  * @fileoverview Disallows direct imports of global state (store). Use hooks or selectors instead.
  */
 
-import { normalizePath, isTestFile } from "../utils/path-utils.js";
-import { mergeConfig } from "../utils/config-utils.js";
+import { mergeConfig } from '../utils/config-utils.js';
+import { isTestFile, normalizePath } from '../utils/path-utils.js';
 
 export default {
   meta: {
@@ -63,7 +63,7 @@ export default {
 
     return {
       ImportDeclaration(node) {
-        const filePath = normalizePath(context.getFilename());
+        const filePath = normalizePath(context.filename);
         const importPath = node.source.value;
 
         // Skip test files - tests typically need direct store access

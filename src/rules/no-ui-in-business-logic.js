@@ -72,7 +72,7 @@ export default {
 
     return {
       ImportDeclaration(node) {
-        const filePath = normalizePath(context.getFilename());
+        const filePath = normalizePath(context.filename);
         const importPath = node.source.value;
 
         // Skip test files
@@ -120,8 +120,8 @@ export default {
       },
       CallExpression(node) {
         // Handle dynamic imports
-        if (node.callee.type === "Import") {
-          const filePath = normalizePath(context.getFilename());
+        if (node.callee.type === 'Import') {
+          const filePath = normalizePath(context.filename);
           const importPath = node.arguments[0].value;
 
           // Skip test files

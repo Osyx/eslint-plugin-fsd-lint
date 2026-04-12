@@ -2,13 +2,9 @@
  * @fileoverview Prevents relative imports between slices. All imports should use absolute paths with aliases.
  */
 
-import {
-  isRelativePath,
-  isTestFile,
-  normalizePath,
-} from "../utils/path-utils.js";
-import { mergeConfig } from "../utils/config-utils.js";
-import path from "path";
+import path from 'path';
+import { mergeConfig } from '../utils/config-utils.js';
+import { isRelativePath, isTestFile, normalizePath } from '../utils/path-utils.js';
 
 export default {
   meta: {
@@ -73,18 +69,10 @@ export default {
       );
 
       // FSD layers we need to check
-      const fsdLayers = [
-        "app",
-        "processes",
-        "pages",
-        "widgets",
-        "features",
-        "entities",
-        "shared",
-      ];
+      const fsdLayers = ['app', 'processes', 'pages', 'widgets', 'features', 'entities', 'shared'];
 
       // Layers that don't have slices (single-layer modules)
-      const singleLayerModules = ["app", "shared"];
+      const singleLayerModules = ['app', 'shared'];
 
       // Find layer and slice from current file path
       const currentPathParts = normalizedCurrentPath.split("/");
@@ -172,7 +160,7 @@ export default {
         }
 
         // Skip test files
-        if (isTestFile(context.getFilename(), config.testFilesPatterns)) {
+        if (isTestFile(context.filename, config.testFilesPatterns)) {
           return;
         }
 
@@ -192,7 +180,7 @@ export default {
         }
 
         // Skip same slice imports if configured
-        if (allowSameSlice && isSameSlice(importPath, context.getFilename())) {
+        if (allowSameSlice && isSameSlice(importPath, context.filename)) {
           return;
         }
 
@@ -212,7 +200,7 @@ export default {
           }
 
           // Skip test files
-          if (isTestFile(context.getFilename(), config.testFilesPatterns)) {
+          if (isTestFile(context.filename, config.testFilesPatterns)) {
             return;
           }
 
@@ -230,10 +218,7 @@ export default {
           // as that information is not available at parse time
 
           // Skip same slice imports if configured
-          if (
-            allowSameSlice &&
-            isSameSlice(importPath, context.getFilename())
-          ) {
+          if (allowSameSlice && isSameSlice(importPath, context.filename)) {
             return;
           }
 
