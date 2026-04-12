@@ -2,8 +2,8 @@
  * @fileoverview Prevents importing UI components in business logic layers (model, api, lib).
  */
 
-import { extractLayerFromPath, isTestFile, normalizePath } from '../utils/path-utils.js';
 import { mergeConfig } from '../utils/config-utils.js';
+import { extractLayerFromPath, isTestFile, normalizePath } from '../utils/path-utils.js';
 
 export default {
   meta: {
@@ -62,7 +62,7 @@ export default {
 
     return {
       ImportDeclaration(node) {
-        const filePath = normalizePath(context.getFilename());
+        const filePath = normalizePath(context.filename);
         const importPath = node.source.value;
 
         // Skip test files
@@ -109,7 +109,7 @@ export default {
       CallExpression(node) {
         // Handle dynamic imports
         if (node.callee.type === 'Import') {
-          const filePath = normalizePath(context.getFilename());
+          const filePath = normalizePath(context.filename);
           const importPath = node.arguments[0].value;
 
           // Skip test files
