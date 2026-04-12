@@ -5,6 +5,9 @@
 import path from "path";
 import { mergeConfig } from "../utils/config-utils.js";
 import {
+  extractLayerFromPath,
+  extractSliceFromPath,
+  getLayerPattern,
   isRelativePath,
   isTestFile,
   normalizePath,
@@ -26,6 +29,45 @@ export default {
       {
         type: "object",
         properties: {
+          rootPath: { type: "string" },
+          alias: {
+            oneOf: [
+              { type: "string" },
+              {
+                type: "object",
+                properties: {
+                  value: { type: "string" },
+                  withSlash: { type: "boolean" },
+                },
+                required: ["value"],
+                additionalProperties: false,
+              },
+            ],
+          },
+          layers: {
+            type: "object",
+            additionalProperties: {
+              type: "object",
+              properties: {
+                pattern: { type: "string" },
+                priority: { type: "number" },
+                allowedToImport: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+              },
+              additionalProperties: false,
+            },
+          },
+          folderPattern: {
+            type: "object",
+            properties: {
+              enabled: { type: "boolean" },
+              regex: { type: "string" },
+              extractionGroup: { type: "number" },
+            },
+            additionalProperties: false,
+          },
           testFilesPatterns: {
             type: "array",
             items: { type: "string" },
@@ -72,81 +114,39 @@ export default {
         path.posix.resolve(currentDir, importPath),
       );
 
-      // FSD layers we need to check
-      const fsdLayers = [
-        "app",
-        "processes",
-        "pages",
-        "widgets",
-        "features",
-        "entities",
-        "shared",
-      ];
-
       // Layers that don't have slices (single-layer modules)
       const singleLayerModules = ["app", "shared"];
 
       // Find layer and slice from current file path
-      const currentPathParts = normalizedCurrentPath.split("/");
-      let currentLayer = null;
-      let currentSlice = null;
-      let layerIndex = -1;
-
-      for (let i = 0; i < currentPathParts.length; i++) {
-        if (fsdLayers.includes(currentPathParts[i])) {
-          currentLayer = currentPathParts[i];
-          layerIndex = i;
-          // The slice is the next part after the layer (if it exists and layer has slices)
-          if (
-            i + 1 < currentPathParts.length &&
-            !singleLayerModules.includes(currentLayer)
-          ) {
-            currentSlice = currentPathParts[i + 1];
-          }
-          break;
-        }
-      }
+      const currentLayer = extractLayerFromPath(normalizedCurrentPath, config);
+      const currentSlice = extractSliceFromPath(normalizedCurrentPath, config);
 
       // If we couldn't find a layer, we can't determine if it's same slice
-      if (!currentLayer || layerIndex === -1) return false;
+      if (!currentLayer) return false;
 
       // For single-layer modules (app, shared), any import within the layer is allowed
       if (singleLayerModules.includes(currentLayer)) {
-        // Check if the resolved import is within the same layer
-        return resolvedImportPath.includes(`/${currentLayer}/`);
+        return (
+          extractLayerFromPath(resolvedImportPath, config) === currentLayer
+        );
       }
 
       // Find layer and slice from resolved import path
-      const resolvedPathParts = resolvedImportPath.split("/");
-      let importLayer = null;
-      let importSlice = null;
-      let importLayerIndex = -1;
-
-      for (let i = 0; i < resolvedPathParts.length; i++) {
-        if (fsdLayers.includes(resolvedPathParts[i])) {
-          importLayer = resolvedPathParts[i];
-          importLayerIndex = i;
-          // The slice is the next part after the layer (if it exists and layer has slices)
-          if (
-            i + 1 < resolvedPathParts.length &&
-            !singleLayerModules.includes(importLayer)
-          ) {
-            importSlice = resolvedPathParts[i + 1];
-          }
-          break;
-        }
-      }
+      const importLayer = extractLayerFromPath(resolvedImportPath, config);
+      const importSlice = extractSliceFromPath(resolvedImportPath, config);
 
       // If we couldn't find a layer in the import, it might be within the same slice
-      if (!importLayer || importLayerIndex === -1) {
+      if (!importLayer) {
+        const currentLayerPattern = getLayerPattern(currentLayer, config);
+
         // Check if the resolved path is still within the current layer/slice structure
         if (currentSlice) {
           return resolvedImportPath.includes(
-            `/${currentLayer}/${currentSlice}/`,
+            `/${currentLayerPattern}/${currentSlice}/`,
           );
         } else {
           // For single-layer modules without slices
-          return resolvedImportPath.includes(`/${currentLayer}/`);
+          return resolvedImportPath.includes(`/${currentLayerPattern}/`);
         }
       }
 

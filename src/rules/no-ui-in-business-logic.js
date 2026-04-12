@@ -26,6 +26,44 @@ export default {
         type: "object",
         properties: {
           rootPath: { type: "string" },
+          alias: {
+            oneOf: [
+              { type: "string" },
+              {
+                type: "object",
+                properties: {
+                  value: { type: "string" },
+                  withSlash: { type: "boolean" },
+                },
+                required: ["value"],
+                additionalProperties: false,
+              },
+            ],
+          },
+          layers: {
+            type: "object",
+            additionalProperties: {
+              type: "object",
+              properties: {
+                pattern: { type: "string" },
+                priority: { type: "number" },
+                allowedToImport: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+              },
+              additionalProperties: false,
+            },
+          },
+          folderPattern: {
+            type: "object",
+            properties: {
+              enabled: { type: "boolean" },
+              regex: { type: "string" },
+              extractionGroup: { type: "number" },
+            },
+            additionalProperties: false,
+          },
           testFilesPatterns: {
             type: "array",
             items: { type: "string" },
