@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:test-project": "cd test-project && npm run lint",
-    "lint:test-project-next": "cd test-project-next && ../node_modules/.bin/eslint src --ext .ts,.tsx",
+    "lint:test-project-next": "cd test-project-next && eslint src --ext .ts,.tsx",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
