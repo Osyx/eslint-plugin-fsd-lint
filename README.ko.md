@@ -136,6 +136,87 @@ export default [
 ];
 ```
 
+### Next.js App Router와 커스텀 레이어 폴더명
+
+Next.js App Router 프로젝트에서는 Next의 라우팅 파일을 `src/app`에 두고, 나머지 코드를 FSD 레이어로 구성할 수 있습니다.
+
+권장 설정은 FSD 표준 레이어 폴더명(`app`, `pages`, `widgets`, `features`, `entities`, `shared`)을 그대로 쓰는 것입니다. `layers`를 오버라이드하지 않으면 플러그인은 내장 FSD 폴더명(`app`, `processes`, `pages`, `widgets`, `features`, `entities`, `shared`)을 기본값으로 사용하므로, `processes`를 쓰는 기존 프로젝트도 계속 지원됩니다. 커스텀 레이어 폴더명은 기존 프로젝트, 마이그레이션, 프레임워크 제약이 있는 경우를 위해 지원하지만, FSD 컨벤션이 덜 명확해질 수 있으므로 기본 선택지로는 권장하지 않습니다.
+
+FSD의 `pages` 레이어 이름 대신 `screens` 폴더명을 써야 한다면 `eslint.config.js`에서 `layers.pages.pattern`으로 매핑하면 됩니다. 같은 방식으로 다른 레이어 폴더명도 프로젝트 상황에 맞게 바꿀 수 있습니다. 설정에서는 FSD의 표준 레이어 키를 유지하고, 각 레이어의 `pattern`에 실제 폴더명을 넣으면 됩니다.
+
+```js
+import fsdPlugin from "eslint-plugin-fsd-lint";
+
+const fsdOptions = {
+  rootPath: "/src/",
+  alias: {
+    value: "@",
+    withSlash: true,
+  },
+  layers: {
+    app: {
+      pattern: "app",
+    },
+    pages: {
+      pattern: "screens",
+    },
+    widgets: {
+      pattern: "blocks",
+    },
+    features: {
+      pattern: "actions",
+    },
+    entities: {
+      pattern: "domain",
+    },
+    shared: {
+      pattern: "common",
+    },
+  },
+  ignoreImportPatterns: ["\\.css$"],
+};
+
+export default [
+  {
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      fsd: fsdPlugin,
+    },
+    rules: {
+      "fsd/forbidden-imports": ["error", fsdOptions],
+      "fsd/no-cross-slice-dependency": ["error", fsdOptions],
+      "fsd/no-public-api-sidestep": ["error", fsdOptions],
+      "fsd/no-relative-imports": [
+        "error",
+        {
+          ...fsdOptions,
+          allowSameSlice: true,
+        },
+      ],
+      "fsd/no-global-store-imports": "error",
+      "fsd/ordered-imports": ["warn", fsdOptions],
+    },
+  },
+];
+```
+
+```text
+src/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/health/route.ts
+├── screens/
+│   └── dashboard/
+├── blocks/
+├── actions/
+├── domain/
+└── common/
+```
+
+`allowedToImport`, `excludeLayers`, `publicApi.enforceForLayers`, `ordered-imports.customOrder` 같은 옵션은 여전히 표준 레이어 키(`app`, `pages`, `widgets`, `features`, `entities`, `shared`)를 사용합니다. `pattern` 값만 실제 폴더명이나 import segment로 쓰입니다.
+새 프로젝트라면 명확한 이유가 없는 한 표준 레이어 폴더명을 우선 사용하는 편이 좋습니다.
+
 ### 🛠️ 고급 구성
 
 고급 옵션을 통해 규칙의 동작을 커스터마이즈할 수 있습니다:

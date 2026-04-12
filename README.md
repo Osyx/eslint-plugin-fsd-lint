@@ -7,7 +7,7 @@
 
 [English](README.md) | [한국어](README.ko.md)
 
-> ESLint 9 plugin for enforcing Feature-Sliced Design rules with Flat Config support.
+> ESLint 9+ plugin for enforcing Feature-Sliced Design rules with Flat Config support.
 
 ## Overview
 
@@ -166,6 +166,87 @@ Typical `rootPath` values:
 - `'/src/root/'`
 
 The value should match a stable segment inside the absolute path ESLint sees for your files.
+
+### Next.js App Router and Custom Layer Folder Names
+
+Next.js App Router projects can keep Next's route files in `src/app` and use FSD layers for the rest of the application.
+
+The recommended setup is to keep the standard FSD layer folder names (`app`, `pages`, `widgets`, `features`, `entities`, `shared`). Without a `layers` override, the plugin uses its built-in FSD folder names (`app`, `processes`, `pages`, `widgets`, `features`, `entities`, `shared`) by default, so existing projects that still use `processes` remain supported. Custom layer folder names are supported for existing projects, migrations, or framework constraints, but they are not recommended as a default choice because they make FSD conventions less recognizable.
+
+If your project uses `screens` instead of the FSD `pages` folder name, map the `pages` layer to the `screens` folder with `layers.pages.pattern` in `eslint.config.js`. The same pattern works for other layer folder names as well. Keep the canonical FSD layer keys in the config and set each layer's `pattern` to the folder name used by your project.
+
+```js
+import fsdPlugin from "eslint-plugin-fsd-lint";
+
+const fsdOptions = {
+  rootPath: "/src/",
+  alias: {
+    value: "@",
+    withSlash: true,
+  },
+  layers: {
+    app: {
+      pattern: "app",
+    },
+    pages: {
+      pattern: "screens",
+    },
+    widgets: {
+      pattern: "blocks",
+    },
+    features: {
+      pattern: "actions",
+    },
+    entities: {
+      pattern: "domain",
+    },
+    shared: {
+      pattern: "common",
+    },
+  },
+  ignoreImportPatterns: ["\\.css$"],
+};
+
+export default [
+  {
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      fsd: fsdPlugin,
+    },
+    rules: {
+      "fsd/forbidden-imports": ["error", fsdOptions],
+      "fsd/no-cross-slice-dependency": ["error", fsdOptions],
+      "fsd/no-public-api-sidestep": ["error", fsdOptions],
+      "fsd/no-relative-imports": [
+        "error",
+        {
+          ...fsdOptions,
+          allowSameSlice: true,
+        },
+      ],
+      "fsd/no-global-store-imports": "error",
+      "fsd/ordered-imports": ["warn", fsdOptions],
+    },
+  },
+];
+```
+
+```text
+src/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/health/route.ts
+├── screens/
+│   └── dashboard/
+├── blocks/
+├── actions/
+├── domain/
+└── common/
+```
+
+Options such as `allowedToImport`, `excludeLayers`, `publicApi.enforceForLayers`, and `ordered-imports.customOrder` still use the canonical layer keys (`app`, `pages`, `widgets`, `features`, `entities`, `shared`). The `pattern` value is the folder/import segment used on disk.
+For new projects, prefer the standard layer folder names unless there is a clear reason to do otherwise.
 
 ---
 

@@ -42,6 +42,35 @@ export default {
             description:
               "Custom layer order (default from top to bottom: app, processes, pages, widgets, features, entities, shared)",
           },
+          rootPath: { type: "string" },
+          layers: {
+            type: "object",
+            additionalProperties: {
+              type: "object",
+              properties: {
+                pattern: { type: "string" },
+                priority: { type: "number" },
+                allowedToImport: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+              },
+              additionalProperties: false,
+            },
+          },
+          folderPattern: {
+            type: "object",
+            properties: {
+              enabled: { type: "boolean" },
+              regex: { type: "string" },
+              extractionGroup: { type: "number" },
+            },
+            additionalProperties: false,
+          },
+          ignoreImportPatterns: {
+            type: "array",
+            items: { type: "string" },
+          },
         },
         additionalProperties: false,
       },

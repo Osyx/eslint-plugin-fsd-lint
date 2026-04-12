@@ -57,6 +57,13 @@ testRule("no-cross-slice-dependency", noCrossSliceDependency, {
       description: "Relative import to parent slice (OK)",
       code: 'import { authReducer } from "../model/slice";',
     },
+    {
+      description: "Relative import within app layer (OK)",
+      ...withFilename(
+        'import { withRedux } from "./providers/with-redux";',
+        "src/app/index.tsx",
+      ),
+    },
 
     // Test file exceptions
     {

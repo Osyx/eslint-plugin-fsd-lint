@@ -40,10 +40,55 @@ export default {
             ],
           },
           layers: {
-            type: "array",
-            items: { type: "string" },
-            description:
-              "Layers that require using public API (default: ['features', 'entities', 'widgets'])",
+            oneOf: [
+              {
+                type: "array",
+                items: { type: "string" },
+                description:
+                  "Layers that require using public API (default: ['features', 'entities', 'widgets'])",
+              },
+              {
+                type: "object",
+                additionalProperties: {
+                  type: "object",
+                  properties: {
+                    pattern: { type: "string" },
+                    priority: { type: "number" },
+                    allowedToImport: {
+                      type: "array",
+                      items: { type: "string" },
+                    },
+                  },
+                  additionalProperties: false,
+                },
+                description:
+                  "Custom layer configuration. Use publicApi.enforceForLayers to customize restricted layers.",
+              },
+            ],
+          },
+          rootPath: { type: "string" },
+          folderPattern: {
+            type: "object",
+            properties: {
+              enabled: { type: "boolean" },
+              regex: { type: "string" },
+              extractionGroup: { type: "number" },
+            },
+            additionalProperties: false,
+          },
+          publicApi: {
+            type: "object",
+            properties: {
+              enforceForLayers: {
+                type: "array",
+                items: { type: "string" },
+              },
+              fileNames: {
+                type: "array",
+                items: { type: "string" },
+              },
+            },
+            additionalProperties: false,
           },
           publicApiFiles: {
             type: "array",
@@ -72,11 +117,19 @@ export default {
   create(context) {
     // Merge user config with default config
     const options = context.options[0] || {};
-    const config = mergeConfig(options);
+    const config = mergeConfig({
+      ...options,
+      layers: Array.isArray(options.layers) ? undefined : options.layers,
+    });
 
     // Layers that require public API
-    const restrictedLayers = options.layers ||
-      config.publicApi?.enforceForLayers || ["features", "entities", "widgets"];
+    const restrictedLayers = Array.isArray(options.layers)
+      ? options.layers
+      : config.publicApi?.enforceForLayers || [
+          "features",
+          "entities",
+          "widgets",
+        ];
 
     // Files that are considered public API
     const publicApiFiles = options.publicApiFiles ||

@@ -71,54 +71,101 @@ export function getRelativePathFromRoot(filePath, rootPattern = "/src/") {
 }
 
 /**
+ * Get the configured folder name for a layer.
+ * @param {string} layer - Layer key
+ * @param {Object} config - Configuration object
+ * @return {string} - Configured layer folder pattern
+ */
+export function getLayerPattern(layer, config) {
+  return config.layers[layer]?.pattern || layer;
+}
+
+/**
+ * Find a configured layer by a path segment.
+ * @param {string} segment - Path segment to match
+ * @param {Object} config - Configuration object
+ * @return {string|null} - Matching layer key or null
+ */
+export function findLayerBySegment(segment, config) {
+  return (
+    Object.keys(config.layers).find(
+      (layer) =>
+        layer === segment || getLayerPattern(layer, config) === segment,
+    ) || null
+  );
+}
+
+/**
+ * Remove the configured import alias from an import path.
+ * @param {string} importPath - Path from import statement
+ * @param {Object} config - Configuration object
+ * @return {string|null} - Path after alias or null when alias does not match
+ */
+export function getImportPathWithoutAlias(importPath, config) {
+  if (isRelativePath(importPath)) {
+    return null;
+  }
+
+  const aliasConfig = config.alias;
+  const aliasValue = normalizePath(aliasConfig.value);
+  const withSlash = aliasConfig.withSlash;
+  const normalizedPath = normalizePath(importPath);
+
+  const aliasPatterns = withSlash
+    ? [`${aliasValue}/`]
+    : [aliasValue, `${aliasValue}/`];
+
+  const matchingPattern = aliasPatterns.find((pattern) =>
+    normalizedPath.startsWith(pattern),
+  );
+
+  if (!matchingPattern) {
+    return null;
+  }
+
+  let pathWithoutAlias = normalizedPath.substring(matchingPattern.length);
+
+  if (pathWithoutAlias.startsWith("/")) {
+    pathWithoutAlias = pathWithoutAlias.substring(1);
+  }
+
+  return pathWithoutAlias;
+}
+
+/**
  * Extract layer from import path considering alias
  * @param {string} importPath - Path from import statement
  * @param {Object} config - Configuration object
  * @return {string|null} - Extracted layer or null
  */
 export function extractLayerFromImportPath(importPath, config) {
-  if (isRelativePath(importPath)) {
-    return null; // Don't process relative paths
-  }
-
-  // Get alias configuration
-  const aliasConfig = config.alias;
-  const aliasValue = aliasConfig.value;
-  const withSlash = aliasConfig.withSlash;
-
-  // Normalize the import path
-  const normalizedPath = normalizePath(importPath);
-
-  // Construct alias patterns for both formats
-  const aliasPatterns = [
-    withSlash ? `${aliasValue}/` : aliasValue,
-    withSlash ? `${aliasValue}/` : `${aliasValue}/`,
-  ];
-
-  // Check if path starts with any alias pattern
-  const matchingPattern = aliasPatterns.find((pattern) =>
-    normalizedPath.startsWith(pattern),
-  );
-  if (!matchingPattern) {
-    return null; // Not using our alias
-  }
-
-  // Process path after removing alias
-  let pathWithoutAlias = normalizedPath.substring(matchingPattern.length);
-
-  // Remove leading slash if present
-  if (pathWithoutAlias.startsWith("/")) {
-    pathWithoutAlias = pathWithoutAlias.substring(1);
-  }
+  const pathWithoutAlias = getImportPathWithoutAlias(importPath, config);
+  if (!pathWithoutAlias) return null;
 
   // First path segment is the layer
   const firstSegment = pathWithoutAlias.split("/")[0];
 
   // Check if it matches any layer
-  return Object.keys(config.layers).find(
-    (layer) =>
-      layer === firstSegment || config.layers[layer].pattern === firstSegment,
-  );
+  return findLayerBySegment(firstSegment, config);
+}
+
+/**
+ * Extract slice info from an aliased import path.
+ * @param {string} importPath - Path from import statement
+ * @param {Object} config - Configuration object
+ * @return {string|null} - Extracted slice name or null
+ */
+export function extractSliceFromImportPath(importPath, config) {
+  const pathWithoutAlias = getImportPathWithoutAlias(importPath, config);
+  if (!pathWithoutAlias) return null;
+
+  const segments = pathWithoutAlias.split("/");
+  if (segments.length < 2) return null;
+
+  const layer = findLayerBySegment(segments[0], config);
+  if (!layer) return null;
+
+  return segments[1];
 }
 
 /**
@@ -150,9 +197,7 @@ export function extractLayerFromPath(filePath, config) {
   }
 
   // Default layer matching if no folder pattern or no match
-  return Object.keys(config.layers).find(
-    (layer) => layer === firstDir || config.layers[layer].pattern === firstDir,
-  );
+  return findLayerBySegment(firstDir, config);
 }
 
 /**
