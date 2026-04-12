@@ -1,5 +1,9 @@
 import React from "react";
 
+// ✅ VALID: Relative import within same slice
+import { DashboardStats } from "./components/DashboardStats";
+import { useDashboardData } from "../hooks/useDashboardData";
+
 // ✅ VALID: Import from widgets via public API
 import { Header } from "@widgets/header";
 
@@ -16,10 +20,6 @@ import { formatUserName } from "@entities/user/helpers";
 
 // ✅ VALID: Import from shared
 import { Button } from "@shared/ui/Button";
-
-// ✅ VALID: Relative import within same slice
-import { DashboardStats } from "./components/DashboardStats";
-import { useDashboardData } from "../hooks/useDashboardData";
 
 // ❌ INVALID Examples (commented out):
 // import { LoginPage } from '@pages/login'; // Cross-slice dependency in same layer

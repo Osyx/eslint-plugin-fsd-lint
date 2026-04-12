@@ -14,6 +14,18 @@ export const ruleTester = new RuleTester({
   },
 });
 
+function normalizeTestCase(testCase) {
+  const normalized =
+    typeof testCase === "string" ? { code: testCase } : { ...testCase };
+
+  if (normalized.description && !normalized.name) {
+    normalized.name = normalized.description;
+  }
+
+  delete normalized.description;
+  return normalized;
+}
+
 /**
  * Helper function to add filename to test cases
  * @param {string} code - Code to test
@@ -31,7 +43,7 @@ export function withFilename(code, filename) {
  * @returns {Object} - Test case with options
  */
 export function withOptions(testCase, options) {
-  return { ...testCase, options: [options] };
+  return { ...normalizeTestCase(testCase), options: [options] };
 }
 
 /**
@@ -48,7 +60,7 @@ export function testRule(ruleName, rule, tests) {
 
         try {
           ruleTester.run(`${ruleName}_valid_${index}`, rule, {
-            valid: [test],
+            valid: [normalizeTestCase(test)],
             invalid: [],
           });
         } catch (error) {
@@ -66,7 +78,7 @@ export function testRule(ruleName, rule, tests) {
         try {
           ruleTester.run(`${ruleName}_invalid_${index}`, rule, {
             valid: [],
-            invalid: [test],
+            invalid: [normalizeTestCase(test)],
           });
         } catch (error) {
           console.error(`Test failed: ${testDescription}`);

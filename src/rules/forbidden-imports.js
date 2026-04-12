@@ -2,8 +2,13 @@
  * @fileoverview Layer imports rule - Enforces layer dependency direction in FSD architecture
  */
 
-import { mergeConfig } from '../utils/config-utils.js';
-import { extractLayerFromImportPath, extractLayerFromPath, isTestFile, normalizePath } from '../utils/path-utils.js';
+import { mergeConfig } from "../utils/config-utils.js";
+import {
+  extractLayerFromImportPath,
+  extractLayerFromPath,
+  isTestFile,
+  normalizePath,
+} from "../utils/path-utils.js";
 
 export default {
   meta: {
@@ -112,7 +117,6 @@ export default {
 
         // Get layer priorities and allowed imports
         const fromLayerConfig = config.layers[fromLayer];
-        const toLayerConfig = config.layers[toLayer];
 
         // Get list of allowed imports
         const allowedToImport = fromLayerConfig.allowedToImport || [];

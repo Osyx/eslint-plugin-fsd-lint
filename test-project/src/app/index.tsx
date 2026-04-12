@@ -10,11 +10,11 @@ import { LoginPage } from "@pages/login";
 import { Header } from "@widgets/header";
 import { LoginForm } from "@features/auth";
 import { User } from "@entities/user";
-import { Button } from "@shared/ui/Button";
 
 // ✅ VALID: Import from custom segments
 import { userService } from "@entities/user/services";
 import { validateEmail } from "@entities/user/validators";
+import { Button } from "@shared/ui/Button";
 
 const App = () => {
   return (

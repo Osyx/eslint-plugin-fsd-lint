@@ -2,15 +2,15 @@
  * @fileoverview Prevents direct dependencies between slices in the same layer. Each slice should be isolated.
  */
 
-import { mergeConfig } from '../utils/config-utils.js';
+import { mergeConfig } from "../utils/config-utils.js";
 import {
-    extractLayerFromImportPath,
-    extractLayerFromPath,
-    extractSliceFromPath,
-    isRelativePath,
-    isTestFile,
-    normalizePath,
-} from '../utils/path-utils.js';
+  extractLayerFromImportPath,
+  extractLayerFromPath,
+  extractSliceFromPath,
+  isRelativePath,
+  isTestFile,
+  normalizePath,
+} from "../utils/path-utils.js";
 
 export default {
   meta: {

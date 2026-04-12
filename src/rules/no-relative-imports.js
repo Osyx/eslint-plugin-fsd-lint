@@ -2,9 +2,13 @@
  * @fileoverview Prevents relative imports between slices. All imports should use absolute paths with aliases.
  */
 
-import path from 'path';
-import { mergeConfig } from '../utils/config-utils.js';
-import { isRelativePath, isTestFile, normalizePath } from '../utils/path-utils.js';
+import path from "path";
+import { mergeConfig } from "../utils/config-utils.js";
+import {
+  isRelativePath,
+  isTestFile,
+  normalizePath,
+} from "../utils/path-utils.js";
 
 export default {
   meta: {
@@ -69,10 +73,18 @@ export default {
       );
 
       // FSD layers we need to check
-      const fsdLayers = ['app', 'processes', 'pages', 'widgets', 'features', 'entities', 'shared'];
+      const fsdLayers = [
+        "app",
+        "processes",
+        "pages",
+        "widgets",
+        "features",
+        "entities",
+        "shared",
+      ];
 
       // Layers that don't have slices (single-layer modules)
-      const singleLayerModules = ['app', 'shared'];
+      const singleLayerModules = ["app", "shared"];
 
       // Find layer and slice from current file path
       const currentPathParts = normalizedCurrentPath.split("/");

@@ -2,8 +2,12 @@
  * @fileoverview Prevents direct imports from internal files of modules. Use public API (index) instead.
  */
 
-import { mergeConfig } from '../utils/config-utils.js';
-import { extractLayerFromImportPath, isTestFile, normalizePath } from '../utils/path-utils.js';
+import { mergeConfig } from "../utils/config-utils.js";
+import {
+  extractLayerFromImportPath,
+  isTestFile,
+  normalizePath,
+} from "../utils/path-utils.js";
 
 export default {
   meta: {
@@ -139,9 +143,11 @@ export default {
         const layerIndex = pathParts.findIndex((part) => {
           const normalizedPart = normalizePath(part);
           // Check if the part contains the layer (e.g., @entities contains entities)
-          return normalizedPart === importLayer ||
-                 normalizedPart.includes(importLayer) ||
-                 config.layers[importLayer]?.pattern === normalizedPart;
+          return (
+            normalizedPart === importLayer ||
+            normalizedPart.includes(importLayer) ||
+            config.layers[importLayer]?.pattern === normalizedPart
+          );
         });
 
         // If import only specifies layer and slice, it's considered a public API import
@@ -213,9 +219,11 @@ export default {
           const layerIndex = pathParts.findIndex((part) => {
             const normalizedPart = normalizePath(part);
             // Check if the part contains the layer (e.g., @entities contains entities)
-            return normalizedPart === importLayer ||
-                   normalizedPart.includes(importLayer) ||
-                   config.layers[importLayer]?.pattern === normalizedPart;
+            return (
+              normalizedPart === importLayer ||
+              normalizedPart.includes(importLayer) ||
+              config.layers[importLayer]?.pattern === normalizedPart
+            );
           });
 
           // If import only specifies layer and slice, it's considered a public API import
