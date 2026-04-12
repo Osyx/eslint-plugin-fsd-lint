@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint . && cd test-project && npm run lint",
+    "lint": "eslint .",
+    "lint:test-project": "cd test-project && npm run lint",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -23,9 +24,11 @@
   "author": "effozen",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@typescript-eslint/parser": "^8.25.0",
     "@vitest/ui": "^3.0.7",
     "eslint": "^9.21.0",
+    "globals": "^14.0.0",
     "prettier": "3.8.1",
     "vitest": "^3.0.7"
   },

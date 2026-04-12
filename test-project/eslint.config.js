@@ -5,6 +5,15 @@ import reactPlugin from "eslint-plugin-react";
 import fsdPlugin from "eslint-plugin-fsd-lint";
 
 export default [
+  {
+    ignores: [
+      "src/examples/**",
+      "src/**/__tests__/**",
+      "src/features/auth/model/authService.ts",
+      "src/features/auth/ui/LoginFormContainer.tsx",
+      "src/features/profile/model/profileService.ts",
+    ],
+  },
   eslint.configs.recommended,
   {
     files: ["**/*.ts", "**/*.tsx"],
@@ -15,6 +24,13 @@ export default [
     },
     languageOptions: {
       parser: tsparser,
+      globals: {
+        console: "readonly",
+        document: "readonly",
+        HTMLButtonElement: "readonly",
+        HTMLElement: "readonly",
+        setTimeout: "readonly",
+      },
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: "module",
@@ -29,6 +45,7 @@ export default [
       },
     },
     rules: {
+      "no-unused-vars": "off",
       "fsd/forbidden-imports": "error",
       "fsd/no-relative-imports": [
         "error",

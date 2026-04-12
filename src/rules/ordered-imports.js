@@ -2,8 +2,8 @@
  * @fileoverview Enforces ordered imports by Feature-Sliced Design (FSD) layers
  */
 
-import { mergeConfig } from '../utils/config-utils.js';
-import { extractLayerFromImportPath } from '../utils/path-utils.js';
+import { mergeConfig } from "../utils/config-utils.js";
+import { extractLayerFromImportPath } from "../utils/path-utils.js";
 
 export default {
   meta: {

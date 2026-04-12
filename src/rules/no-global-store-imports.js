@@ -2,8 +2,8 @@
  * @fileoverview Disallows direct imports of global state (store). Use hooks or selectors instead.
  */
 
-import { mergeConfig } from '../utils/config-utils.js';
-import { isTestFile, normalizePath } from '../utils/path-utils.js';
+import { mergeConfig } from "../utils/config-utils.js";
+import { isTestFile, normalizePath } from "../utils/path-utils.js";
 
 export default {
   meta: {

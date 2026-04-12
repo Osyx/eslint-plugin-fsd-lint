@@ -120,7 +120,7 @@ export default {
       },
       CallExpression(node) {
         // Handle dynamic imports
-        if (node.callee.type === 'Import') {
+        if (node.callee.type === "Import") {
           const filePath = normalizePath(context.filename);
           const importPath = node.arguments[0].value;
 
