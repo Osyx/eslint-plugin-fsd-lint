@@ -43,5 +43,8 @@ jobs:
       - name: Run test-project lint
         run: npm run lint:test-project
 
+      - name: Run test-project-next lint
+        run: npm run lint:test-project-next
+
       - name: Run tests
         run: npm test
