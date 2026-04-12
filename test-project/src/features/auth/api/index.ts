@@ -5,8 +5,8 @@ export const authApi = {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
-          token: 'fake-jwt-token',
-          user: { id: '1', email, name: 'John Doe' }
+          token: "fake-jwt-token",
+          user: { id: "1", email, name: "John Doe" },
         });
       }, 1000);
     });
@@ -19,6 +19,6 @@ export const authApi = {
 
   async refreshToken(token: string) {
     // Simulate token refresh
-    return Promise.resolve({ token: 'new-fake-jwt-token' });
-  }
+    return Promise.resolve({ token: "new-fake-jwt-token" });
+  },
 };

@@ -16,13 +16,13 @@ export function normalizePath(filePath) {
   }
 
   // Convert Windows backslashes to forward slashes
-  let normalized = filePath.replace(/\\/g, '/');
+  let normalized = filePath.replace(/\\/g, "/");
 
   // Remove duplicate slashes
-  normalized = normalized.replace(/\/+/g, '/');
+  normalized = normalized.replace(/\/+/g, "/");
 
   // Remove trailing slash
-  if (normalized.length > 1 && normalized.endsWith('/')) {
+  if (normalized.length > 1 && normalized.endsWith("/")) {
     normalized = normalized.slice(0, -1);
   }
 
@@ -38,7 +38,7 @@ export function normalizePath(filePath) {
  */
 export function getPathSegments(filePath) {
   const normalized = normalizePath(filePath);
-  return normalized.split('/').filter((segment) => segment.length > 0);
+  return normalized.split("/").filter((segment) => segment.length > 0);
 }
 
 /**
@@ -47,7 +47,12 @@ export function getPathSegments(filePath) {
  * @return {boolean} - Whether the path is relative
  */
 export function isRelativePath(filePath) {
-  return filePath.startsWith('./') || filePath.startsWith('../') || filePath === '.' || filePath === '..';
+  return (
+    filePath.startsWith("./") ||
+    filePath.startsWith("../") ||
+    filePath === "." ||
+    filePath === ".."
+  );
 }
 
 /**
@@ -56,7 +61,7 @@ export function isRelativePath(filePath) {
  * @param {string} rootPattern - Root directory pattern (default: '/src/')
  * @return {string|null} - Extracted relative path or null
  */
-export function getRelativePathFromRoot(filePath, rootPattern = '/src/') {
+export function getRelativePathFromRoot(filePath, rootPattern = "/src/") {
   const normalizedPath = normalizePath(filePath);
   const rootIndex = normalizedPath.indexOf(rootPattern);
 
@@ -85,10 +90,15 @@ export function extractLayerFromImportPath(importPath, config) {
   const normalizedPath = normalizePath(importPath);
 
   // Construct alias patterns for both formats
-  const aliasPatterns = [withSlash ? `${aliasValue}/` : aliasValue, withSlash ? `${aliasValue}/` : `${aliasValue}/`];
+  const aliasPatterns = [
+    withSlash ? `${aliasValue}/` : aliasValue,
+    withSlash ? `${aliasValue}/` : `${aliasValue}/`,
+  ];
 
   // Check if path starts with any alias pattern
-  const matchingPattern = aliasPatterns.find((pattern) => normalizedPath.startsWith(pattern));
+  const matchingPattern = aliasPatterns.find((pattern) =>
+    normalizedPath.startsWith(pattern),
+  );
   if (!matchingPattern) {
     return null; // Not using our alias
   }
@@ -97,16 +107,17 @@ export function extractLayerFromImportPath(importPath, config) {
   let pathWithoutAlias = normalizedPath.substring(matchingPattern.length);
 
   // Remove leading slash if present
-  if (pathWithoutAlias.startsWith('/')) {
+  if (pathWithoutAlias.startsWith("/")) {
     pathWithoutAlias = pathWithoutAlias.substring(1);
   }
 
   // First path segment is the layer
-  const firstSegment = pathWithoutAlias.split('/')[0];
+  const firstSegment = pathWithoutAlias.split("/")[0];
 
   // Check if it matches any layer
   return Object.keys(config.layers).find(
-    (layer) => layer === firstSegment || config.layers[layer].pattern === firstSegment
+    (layer) =>
+      layer === firstSegment || config.layers[layer].pattern === firstSegment,
   );
 }
 
@@ -120,7 +131,7 @@ export function extractLayerFromPath(filePath, config) {
   const relativePath = getRelativePathFromRoot(filePath, config.rootPath);
   if (!relativePath) return null;
 
-  const firstDir = relativePath.split('/')[0];
+  const firstDir = relativePath.split("/")[0];
 
   // Handle folder pattern if enabled
   if (config.folderPattern?.enabled) {
@@ -132,13 +143,16 @@ export function extractLayerFromPath(filePath, config) {
 
       // Check if extracted name matches any layer
       return Object.keys(config.layers).find(
-        (layer) => config.layers[layer].pattern === extracted || layer === extracted
+        (layer) =>
+          config.layers[layer].pattern === extracted || layer === extracted,
       );
     }
   }
 
   // Default layer matching if no folder pattern or no match
-  return Object.keys(config.layers).find((layer) => layer === firstDir || config.layers[layer].pattern === firstDir);
+  return Object.keys(config.layers).find(
+    (layer) => layer === firstDir || config.layers[layer].pattern === firstDir,
+  );
 }
 
 /**
@@ -151,7 +165,7 @@ export function extractSliceFromPath(filePath, config) {
   const relativePath = getRelativePathFromRoot(filePath, config?.rootPath);
   if (!relativePath) return null;
 
-  const segments = relativePath.split('/');
+  const segments = relativePath.split("/");
   if (segments.length < 2) return null;
 
   // Second segment is typically the slice
@@ -167,7 +181,7 @@ export function extractSliceFromPath(filePath, config) {
 export function isTestFile(filePath, patterns) {
   return patterns.some((pattern) => {
     // Support simple wildcard patterns
-    const regexPattern = pattern.replace(/\./g, '\\.').replace(/\*/g, '.*');
+    const regexPattern = pattern.replace(/\./g, "\\.").replace(/\*/g, ".*");
 
     const regex = new RegExp(regexPattern);
     return regex.test(filePath);

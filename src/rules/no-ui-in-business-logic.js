@@ -2,45 +2,53 @@
  * @fileoverview Prevents importing UI components in business logic layers (model, api, lib).
  */
 
-import { mergeConfig } from '../utils/config-utils.js';
-import { extractLayerFromPath, isTestFile, normalizePath } from '../utils/path-utils.js';
+import {
+  extractLayerFromPath,
+  isTestFile,
+  normalizePath,
+} from "../utils/path-utils.js";
+import { mergeConfig } from "../utils/config-utils.js";
 
 export default {
   meta: {
-    type: 'problem',
+    type: "problem",
     docs: {
-      description: 'Prevents importing UI components in business logic layers (model, api, lib).',
+      description:
+        "Prevents importing UI components in business logic layers (model, api, lib).",
       recommended: true,
     },
     messages: {
-      noUiInBusinessLogic: '🚨 UI components cannot be imported in business logic layers (model, api, lib).',
+      noUiInBusinessLogic:
+        "🚨 UI components cannot be imported in business logic layers (model, api, lib).",
     },
     schema: [
       {
-        type: 'object',
+        type: "object",
         properties: {
-          rootPath: { type: 'string' },
+          rootPath: { type: "string" },
           testFilesPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           ignoreImportPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           allowTypeImports: {
-            type: 'boolean',
-            description: 'Allow importing UI component types in business logic',
+            type: "boolean",
+            description: "Allow importing UI component types in business logic",
           },
           uiLayers: {
-            type: 'array',
-            items: { type: 'string' },
-            description: "Layers that contain UI components (default: ['ui', 'widgets', 'features'])",
+            type: "array",
+            items: { type: "string" },
+            description:
+              "Layers that contain UI components (default: ['ui', 'widgets', 'features'])",
           },
           businessLogicLayers: {
-            type: 'array',
-            items: { type: 'string' },
-            description: "Layers that contain business logic (default: ['model', 'api', 'lib'])",
+            type: "array",
+            items: { type: "string" },
+            description:
+              "Layers that contain business logic (default: ['model', 'api', 'lib'])",
           },
         },
         additionalProperties: false,
@@ -57,8 +65,10 @@ export default {
     const allowTypeImports = options.allowTypeImports || false;
 
     // Define UI and business logic layers
-    const uiLayers = new Set(options.uiLayers || ['ui', 'widgets', 'features']);
-    const businessLogicLayers = new Set(options.businessLogicLayers || ['model', 'api', 'lib']);
+    const uiLayers = new Set(options.uiLayers || ["ui", "widgets", "features"]);
+    const businessLogicLayers = new Set(
+      options.businessLogicLayers || ["model", "api", "lib"],
+    );
 
     return {
       ImportDeclaration(node) {
@@ -93,16 +103,18 @@ export default {
         }
 
         // Skip type-only imports if configured
-        if (allowTypeImports && node.importKind === 'type') {
+        if (allowTypeImports && node.importKind === "type") {
           return;
         }
 
         // Check if import is from a UI layer
-        const isUiImport = uiLayers.some((layer) => importPath.includes(`/${layer}/`));
+        const isUiImport = uiLayers.some((layer) =>
+          importPath.includes(`/${layer}/`),
+        );
         if (isUiImport) {
           context.report({
             node,
-            messageId: 'noUiInBusinessLogic',
+            messageId: "noUiInBusinessLogic",
           });
         }
       },
@@ -144,11 +156,13 @@ export default {
           // So we'll always report UI imports in dynamic imports
 
           // Check if import is from a UI layer
-          const isUiImport = uiLayers.some((layer) => importPath.includes(`/${layer}/`));
+          const isUiImport = uiLayers.some((layer) =>
+            importPath.includes(`/${layer}/`),
+          );
           if (isUiImport) {
             context.report({
               node,
-              messageId: 'noUiInBusinessLogic',
+              messageId: "noUiInBusinessLogic",
             });
           }
         }

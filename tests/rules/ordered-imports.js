@@ -1,14 +1,14 @@
 /**
  * @fileoverview Tests for ordered-imports rule
  */
-import { testRule, withFilename, withOptions } from '../utils/test-utils.js';
-import orderedImports from '../../src/rules/ordered-imports.js';
+import { testRule, withFilename, withOptions } from "../utils/test-utils.js";
+import orderedImports from "../../src/rules/ordered-imports.js";
 
-testRule('ordered-imports', orderedImports, {
+testRule("ordered-imports", orderedImports, {
   valid: [
     // Basic ordered imports
     {
-      description: 'Correctly ordered imports (OK)',
+      description: "Correctly ordered imports (OK)",
       code: `
         import React from 'react';
         import { useDispatch } from 'react-redux';
@@ -21,7 +21,7 @@ testRule('ordered-imports', orderedImports, {
       `,
     },
     {
-      description: 'Correctly ordered imports with type imports (OK)',
+      description: "Correctly ordered imports with type imports (OK)",
       code: `
         import React from 'react';
         import type { FC } from 'react';
@@ -44,7 +44,7 @@ testRule('ordered-imports', orderedImports, {
 
     // Node modules and third-party imports
     {
-      description: 'Correctly ordered node modules imports (OK)',
+      description: "Correctly ordered node modules imports (OK)",
       code: `
         import React from 'react';
         import { useDispatch } from 'react-redux';
@@ -52,7 +52,7 @@ testRule('ordered-imports', orderedImports, {
       `,
     },
     {
-      description: 'Correctly ordered third-party imports (OK)',
+      description: "Correctly ordered third-party imports (OK)",
       code: `
         import React from 'react';
         import { useDispatch } from 'react-redux';
@@ -62,7 +62,7 @@ testRule('ordered-imports', orderedImports, {
 
     // Type imports
     {
-      description: 'Correctly ordered type imports (OK)',
+      description: "Correctly ordered type imports (OK)",
       code: `
         import type { FC } from 'react';
         import type { RootState } from 'react-redux';
@@ -77,7 +77,7 @@ testRule('ordered-imports', orderedImports, {
 
     // Dynamic imports
     {
-      description: 'Correctly ordered dynamic imports (OK)',
+      description: "Correctly ordered dynamic imports (OK)",
       code: `
         const React = await import('react');
         const { useDispatch } = await import('react-redux');
@@ -92,31 +92,31 @@ testRule('ordered-imports', orderedImports, {
 
     // Test file exceptions
     {
-      description: 'Test file with unordered imports (exception)',
+      description: "Test file with unordered imports (exception)",
       ...withFilename(
         `
           import { Header } from '@widgets/header';
           import React from 'react';
           import { User } from '@entities/user';
         `,
-        'src/features/auth/ui/LoginForm.test.tsx'
+        "src/features/auth/ui/LoginForm.test.tsx",
       ),
     },
     {
-      description: 'Test file in testing directory (exception)',
+      description: "Test file in testing directory (exception)",
       ...withFilename(
         `
           import { Header } from '@widgets/header';
           import React from 'react';
           import { User } from '@entities/user';
         `,
-        'src/features/auth/testing/service.spec.ts'
+        "src/features/auth/testing/service.spec.ts",
       ),
     },
 
     // Custom configurations
     {
-      description: 'Custom import order (OK)',
+      description: "Custom import order (OK)",
       ...withOptions(
         `
           import { User } from '@entities/user';
@@ -124,12 +124,12 @@ testRule('ordered-imports', orderedImports, {
           import { Button } from '@shared/ui/Button';
         `,
         {
-          importOrder: ['entities', 'react', 'shared'],
-        }
+          importOrder: ["entities", "react", "shared"],
+        },
       ),
     },
     {
-      description: 'Custom import groups (OK)',
+      description: "Custom import groups (OK)",
       ...withOptions(
         `
           import React from 'react';
@@ -142,12 +142,21 @@ testRule('ordered-imports', orderedImports, {
           import { formatDate } from './utils';
         `,
         {
-          groups: ['react', 'react-redux', 'shared', 'entities', 'features', 'widgets', 'pages', 'relative'],
-        }
+          groups: [
+            "react",
+            "react-redux",
+            "shared",
+            "entities",
+            "features",
+            "widgets",
+            "pages",
+            "relative",
+          ],
+        },
       ),
     },
     {
-      description: 'Custom import separators (OK)',
+      description: "Custom import separators (OK)",
       ...withOptions(
         `
           import React from 'react';
@@ -167,13 +176,13 @@ testRule('ordered-imports', orderedImports, {
         `,
         {
           separators: true,
-        }
+        },
       ),
     },
 
     // Path variations
     {
-      description: 'Windows path format (OK)',
+      description: "Windows path format (OK)",
       code: `
         import React from 'react';
         import { Button } from '@shared\\ui\\Button';
@@ -185,7 +194,7 @@ testRule('ordered-imports', orderedImports, {
       `,
     },
     {
-      description: 'Unix path format (OK)',
+      description: "Unix path format (OK)",
       code: `
         import React from 'react';
         import { Button } from '@shared/ui/Button';
@@ -197,7 +206,7 @@ testRule('ordered-imports', orderedImports, {
       `,
     },
     {
-      description: 'Mixed path separators (OK)',
+      description: "Mixed path separators (OK)",
       code: `
         import React from 'react';
         import { Button } from '@shared/ui\\Button';
@@ -211,7 +220,7 @@ testRule('ordered-imports', orderedImports, {
 
     // Real-world scenarios
     {
-      description: 'Import from hooks directory (OK)',
+      description: "Import from hooks directory (OK)",
       code: `
         import React from 'react';
         import { useAuth } from '@features/auth/hooks';
@@ -220,7 +229,7 @@ testRule('ordered-imports', orderedImports, {
       `,
     },
     {
-      description: 'Import from constants directory (OK)',
+      description: "Import from constants directory (OK)",
       code: `
         import React from 'react';
         import { API_ENDPOINTS } from '@features/auth/constants';
@@ -229,7 +238,7 @@ testRule('ordered-imports', orderedImports, {
       `,
     },
     {
-      description: 'Import from utils directory (OK)',
+      description: "Import from utils directory (OK)",
       code: `
         import React from 'react';
         import { formatDate } from '@shared/utils/date';
@@ -242,130 +251,169 @@ testRule('ordered-imports', orderedImports, {
   invalid: [
     // Basic unordered imports
     {
-      description: 'Unordered imports (Forbidden)',
+      description: "Unordered imports (Forbidden)",
       code: `
         import { User } from '@entities/user';
         import React from 'react';
         import { Button } from '@shared/ui/Button';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
     {
-      description: 'Unordered imports with type imports (Forbidden)',
+      description: "Unordered imports with type imports (Forbidden)",
       code: `
         import type { UserType } from '@entities/user';
         import type { FC } from 'react';
         import type { ButtonProps } from '@shared/ui/Button';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
 
     // Node modules and third-party imports
     {
-      description: 'Unordered node modules imports (Forbidden)',
+      description: "Unordered node modules imports (Forbidden)",
       code: `
         import { something } from '@types/react';
         import React from 'react';
         import { useDispatch } from 'react-redux';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
     {
-      description: 'Unordered third-party imports (Forbidden)',
+      description: "Unordered third-party imports (Forbidden)",
       code: `
         import { something } from 'lodash';
         import React from 'react';
         import { useDispatch } from 'react-redux';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
 
     // Type imports
     {
-      description: 'Unordered type imports (Forbidden)',
+      description: "Unordered type imports (Forbidden)",
       code: `
         import type { UserType } from '@entities/user';
         import type { FC } from 'react';
         import type { ButtonProps } from '@shared/ui/Button';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
 
     // Dynamic imports
     {
-      description: 'Unordered dynamic imports (Forbidden)',
+      description: "Unordered dynamic imports (Forbidden)",
       code: `
         const { User } = await import('@entities/user');
         const React = await import('react');
         const { Button } = await import('@shared/ui/Button');
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
 
     // Path variations
     {
-      description: 'Windows path format (Forbidden)',
+      description: "Windows path format (Forbidden)",
       code: `
         import { User } from '@entities\\user';
         import React from 'react';
         import { Button } from '@shared\\ui\\Button';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
     {
-      description: 'Unix path format (Forbidden)',
+      description: "Unix path format (Forbidden)",
       code: `
         import { User } from '@entities/user';
         import React from 'react';
         import { Button } from '@shared/ui/Button';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
     {
-      description: 'Mixed path separators (Forbidden)',
+      description: "Mixed path separators (Forbidden)",
       code: `
         import { User } from '@entities\\user';
         import React from 'react';
         import { Button } from '@shared/ui\\Button';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
 
     // Real-world scenarios
     {
-      description: 'Unordered imports from hooks directory (Forbidden)',
+      description: "Unordered imports from hooks directory (Forbidden)",
       code: `
         import { useUser } from '@entities/user/hooks';
         import React from 'react';
         import { useAuth } from '@features/auth/hooks';
         import { useSidebar } from '@widgets/header/hooks';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
     {
-      description: 'Unordered imports from constants directory (Forbidden)',
+      description: "Unordered imports from constants directory (Forbidden)",
       code: `
         import { USER_ROLES } from '@entities/user/constants';
         import React from 'react';
         import { API_ENDPOINTS } from '@features/auth/constants';
         import { HEADER_HEIGHT } from '@widgets/header/constants';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
     {
-      description: 'Unordered imports from utils directory (Forbidden)',
+      description: "Unordered imports from utils directory (Forbidden)",
       code: `
         import { formatUserName } from '@entities/user/utils';
         import React from 'react';
         import { formatDate } from '@shared/utils/date';
         import { formatSidebarTitle } from '@widgets/header/utils';
       `,
-      errors: [{ messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }, { messageId: 'unorderedImports' }],
+      errors: [
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+      ],
     },
 
     // Complex scenarios
     {
-      description: 'Multiple unordered imports (Forbidden)',
+      description: "Multiple unordered imports (Forbidden)",
       code: `
         import { User } from '@entities/user';
         import React from 'react';
@@ -376,16 +424,16 @@ testRule('ordered-imports', orderedImports, {
         import { formatDate } from './utils';
       `,
       errors: [
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
       ],
     },
     {
-      description: 'Mixed ordered and unordered imports (Forbidden)',
+      description: "Mixed ordered and unordered imports (Forbidden)",
       code: `
         import React from 'react';
         import { User } from '@entities/user';
@@ -396,15 +444,15 @@ testRule('ordered-imports', orderedImports, {
         import { formatDate } from './utils';
       `,
       errors: [
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
       ],
     },
     {
-      description: 'Nested unordered imports (Forbidden)',
+      description: "Nested unordered imports (Forbidden)",
       code: `
         import { User } from '@entities/user';
         import { AnotherUser } from '@entities/another-user';
@@ -415,12 +463,12 @@ testRule('ordered-imports', orderedImports, {
         import { AnotherLoginForm } from '@features/another-auth';
       `,
       errors: [
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
-        { messageId: 'unorderedImports' },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
+        { messageId: "unorderedImports" },
       ],
     },
   ],

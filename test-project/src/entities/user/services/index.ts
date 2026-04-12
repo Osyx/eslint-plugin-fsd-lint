@@ -2,7 +2,7 @@
 export class UserService {
   async fetchUser(id: string) {
     // API call logic
-    return { id, name: 'John Doe' };
+    return { id, name: "John Doe" };
   }
 
   async updateUser(id: string, data: any) {

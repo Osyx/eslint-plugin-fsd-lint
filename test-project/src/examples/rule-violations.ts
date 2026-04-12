@@ -28,7 +28,7 @@
 // import { Button } from '../../../shared/ui/Button';
 
 // ✅ VALID: Relative import within same slice
-import { authService } from '../model/authService';
+import { authService } from "../model/authService";
 
 // ============================================
 // 3. fsd/no-public-api-sidestep violations
@@ -44,10 +44,10 @@ import { authService } from '../model/authService';
 // import { UserService } from '@entities/user/services/UserService';
 
 // ✅ VALID: Import through public API
-import { User } from '@entities/user';
+import { User } from "@entities/user";
 
 // ✅ VALID: Import from segment level (NEW)
-import { userService } from '@entities/user/services';
+import { userService } from "@entities/user/services";
 
 // ============================================
 // 4. fsd/no-cross-slice-dependency violations
@@ -79,7 +79,7 @@ import { userService } from '@entities/user/services';
 // import { store } from '../../app/store';
 
 // ✅ VALID: Using hooks instead
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 
 // ============================================
 // 7. fsd/ordered-imports violations

@@ -14,9 +14,10 @@ import {
 
 export default {
   meta: {
-    type: 'problem',
+    type: "problem",
     docs: {
-      description: 'Prevents direct imports between slices in the same layer (not just features).',
+      description:
+        "Prevents direct imports between slices in the same layer (not just features).",
       recommended: true,
     },
     messages: {
@@ -27,29 +28,31 @@ export default {
     },
     schema: [
       {
-        type: 'object',
+        type: "object",
         properties: {
-          rootPath: { type: 'string' },
+          rootPath: { type: "string" },
           featuresOnly: {
-            type: 'boolean',
-            description: 'If true, only check dependencies between feature slices',
+            type: "boolean",
+            description:
+              "If true, only check dependencies between feature slices",
           },
           excludeLayers: {
-            type: 'array',
-            items: { type: 'string' },
-            description: 'Layers to exclude from this rule (shared is always excluded)',
+            type: "array",
+            items: { type: "string" },
+            description:
+              "Layers to exclude from this rule (shared is always excluded)",
           },
           testFilesPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           ignoreImportPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           allowTypeImports: {
-            type: 'boolean',
-            description: 'Allow type-only imports between slices',
+            type: "boolean",
+            description: "Allow type-only imports between slices",
           },
         },
         additionalProperties: false,
@@ -69,7 +72,7 @@ export default {
     const allowTypeImports = options.allowTypeImports || false;
 
     // Layers to exclude from this rule (shared is always excluded)
-    const excludeLayers = new Set(['shared', ...(config.excludeLayers || [])]);
+    const excludeLayers = new Set(["shared", ...(config.excludeLayers || [])]);
 
     // Track imports to detect circular dependencies
     const importTracker = new Map();
@@ -95,7 +98,7 @@ export default {
         }
 
         // Skip type-only imports if configured
-        if (allowTypeImports && node.importKind === 'type') {
+        if (allowTypeImports && node.importKind === "type") {
           return;
         }
 
@@ -108,7 +111,7 @@ export default {
         }
 
         // If using legacy behavior, only check the features layer
-        if (featuresOnly && fromLayer !== 'features') {
+        if (featuresOnly && fromLayer !== "features") {
           return;
         }
 
@@ -121,12 +124,12 @@ export default {
         // Handle relative paths by checking if they go outside the slice
         if (isRelativePath(importPath)) {
           // For relative paths, we need to analyze if they cross slice boundaries
-          const pathSegments = importPath.split('/');
+          const pathSegments = importPath.split("/");
 
           // Count up-traversals
           let upCount = 0;
           for (const segment of pathSegments) {
-            if (segment === '..') {
+            if (segment === "..") {
               upCount++;
             } else {
               break;
@@ -137,19 +140,25 @@ export default {
           const layerPathPosition = filePath.indexOf(`/${fromLayer}/`);
 
           if (layerPathPosition !== -1) {
-            const layerPathParts = filePath.substring(layerPathPosition + fromLayer.length + 2).split('/');
+            const layerPathParts = filePath
+              .substring(layerPathPosition + fromLayer.length + 2)
+              .split("/");
             const sliceDepth = layerPathParts.length;
 
             // If going up enough levels to exit the current slice (but staying in the same layer)
-            if (upCount > 0 && upCount < sliceDepth && upCount >= layerPathParts[0].length) {
+            if (
+              upCount > 0 &&
+              upCount < sliceDepth &&
+              upCount >= layerPathParts[0].length
+            ) {
               // Extract the target slice name from the relative path
               const targetSlice = pathSegments[upCount];
 
               if (targetSlice && targetSlice !== fromSlice) {
-                if (fromLayer === 'features' || featuresOnly) {
+                if (fromLayer === "features" || featuresOnly) {
                   context.report({
                     node,
-                    messageId: 'noFeatureDependency',
+                    messageId: "noFeatureDependency",
                     data: {
                       fromFeature: fromSlice,
                       toFeature: targetSlice,
@@ -158,7 +167,7 @@ export default {
                 } else {
                   context.report({
                     node,
-                    messageId: 'noSliceDependency',
+                    messageId: "noSliceDependency",
                     data: {
                       layer: fromLayer,
                       fromSlice: fromSlice,
@@ -193,17 +202,21 @@ export default {
           // Extract path after alias and layer
           let pathWithoutAlias;
           if (withSlash) {
-            pathWithoutAlias = importPath.substring(aliasValue.length + `/${fromLayer}/`.length);
+            pathWithoutAlias = importPath.substring(
+              aliasValue.length + `/${fromLayer}/`.length,
+            );
           } else {
-            pathWithoutAlias = importPath.substring(aliasValue.length + `${fromLayer}/`.length);
+            pathWithoutAlias = importPath.substring(
+              aliasValue.length + `${fromLayer}/`.length,
+            );
             // Remove leading slash if present
-            if (pathWithoutAlias.startsWith('/')) {
+            if (pathWithoutAlias.startsWith("/")) {
               pathWithoutAlias = pathWithoutAlias.substring(1);
             }
           }
 
           // First segment is the slice
-          toSlice = pathWithoutAlias.split('/')[0];
+          toSlice = pathWithoutAlias.split("/")[0];
         }
 
         // Skip if slice info is missing or same slice
@@ -224,10 +237,16 @@ export default {
         // Check if this would create a circular dependency
         if (imports.has(targetKey)) {
           // Check if the target slice also imports from the current slice
-          if (importTracker.has(targetKey) && importTracker.get(targetKey).has(importKey)) {
+          if (
+            importTracker.has(targetKey) &&
+            importTracker.get(targetKey).has(importKey)
+          ) {
             context.report({
               node,
-              messageId: fromLayer === 'features' || featuresOnly ? 'noFeatureDependency' : 'noSliceDependency',
+              messageId:
+                fromLayer === "features" || featuresOnly
+                  ? "noFeatureDependency"
+                  : "noSliceDependency",
               data: {
                 fromFeature: fromSlice,
                 toFeature: toSlice,
@@ -243,10 +262,10 @@ export default {
         imports.add(targetKey);
 
         // Report errors with appropriate message based on layer
-        if (fromLayer === 'features' || featuresOnly) {
+        if (fromLayer === "features" || featuresOnly) {
           context.report({
             node,
-            messageId: 'noFeatureDependency',
+            messageId: "noFeatureDependency",
             data: {
               fromFeature: fromSlice,
               toFeature: toSlice,
@@ -255,7 +274,7 @@ export default {
         } else {
           context.report({
             node,
-            messageId: 'noSliceDependency',
+            messageId: "noSliceDependency",
             data: {
               layer: fromLayer,
               fromSlice: fromSlice,
@@ -266,7 +285,7 @@ export default {
       },
       CallExpression(node) {
         // Handle dynamic imports
-        if (node.callee.type === 'Import') {
+        if (node.callee.type === "Import") {
           const importPath = node.arguments[0].value;
 
           // Skip relative imports
@@ -298,7 +317,7 @@ export default {
           }
 
           // If using legacy behavior, only check the features layer
-          if (featuresOnly && fromLayer !== 'features') {
+          if (featuresOnly && fromLayer !== "features") {
             return;
           }
 
@@ -327,17 +346,21 @@ export default {
           // Extract path after alias and layer
           let pathWithoutAlias;
           if (withSlash) {
-            pathWithoutAlias = importPath.substring(aliasValue.length + `/${fromLayer}/`.length);
+            pathWithoutAlias = importPath.substring(
+              aliasValue.length + `/${fromLayer}/`.length,
+            );
           } else {
-            pathWithoutAlias = importPath.substring(aliasValue.length + `${fromLayer}/`.length);
+            pathWithoutAlias = importPath.substring(
+              aliasValue.length + `${fromLayer}/`.length,
+            );
             // Remove leading slash if present
-            if (pathWithoutAlias.startsWith('/')) {
+            if (pathWithoutAlias.startsWith("/")) {
               pathWithoutAlias = pathWithoutAlias.substring(1);
             }
           }
 
           // First segment is the slice
-          toSlice = pathWithoutAlias.split('/')[0];
+          toSlice = pathWithoutAlias.split("/")[0];
 
           // Skip if slice info is missing or same slice
           if (!toSlice || toSlice === fromSlice) {
@@ -357,10 +380,16 @@ export default {
           // Check if this would create a circular dependency
           if (imports.has(targetKey)) {
             // Check if the target slice also imports from the current slice
-            if (importTracker.has(targetKey) && importTracker.get(targetKey).has(importKey)) {
+            if (
+              importTracker.has(targetKey) &&
+              importTracker.get(targetKey).has(importKey)
+            ) {
               context.report({
                 node,
-                messageId: fromLayer === 'features' || featuresOnly ? 'noFeatureDependency' : 'noSliceDependency',
+                messageId:
+                  fromLayer === "features" || featuresOnly
+                    ? "noFeatureDependency"
+                    : "noSliceDependency",
                 data: {
                   fromFeature: fromSlice,
                   toFeature: toSlice,
@@ -376,10 +405,10 @@ export default {
           imports.add(targetKey);
 
           // Report errors with appropriate message based on layer
-          if (fromLayer === 'features' || featuresOnly) {
+          if (fromLayer === "features" || featuresOnly) {
             context.report({
               node,
-              messageId: 'noFeatureDependency',
+              messageId: "noFeatureDependency",
               data: {
                 fromFeature: fromSlice,
                 toFeature: toSlice,
@@ -388,7 +417,7 @@ export default {
           } else {
             context.report({
               node,
-              messageId: 'noSliceDependency',
+              messageId: "noSliceDependency",
               data: {
                 layer: fromLayer,
                 fromSlice: fromSlice,

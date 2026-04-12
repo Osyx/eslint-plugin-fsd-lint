@@ -56,11 +56,9 @@ pnpm add -D eslint eslint-plugin-fsd-lint
 Use the built-in preset if you want sensible defaults with minimal setup.
 
 ```js
-import fsdPlugin from 'eslint-plugin-fsd-lint';
+import fsdPlugin from "eslint-plugin-fsd-lint";
 
-export default [
-  fsdPlugin.configs.recommended,
-];
+export default [fsdPlugin.configs.recommended];
 ```
 
 ### Strict Preset
@@ -68,11 +66,9 @@ export default [
 Use `strict` when you want all architectural checks to fail the build.
 
 ```js
-import fsdPlugin from 'eslint-plugin-fsd-lint';
+import fsdPlugin from "eslint-plugin-fsd-lint";
 
-export default [
-  fsdPlugin.configs.strict,
-];
+export default [fsdPlugin.configs.strict];
 ```
 
 ### Base Preset
@@ -80,11 +76,9 @@ export default [
 Use `base` if you are gradually adopting FSD rules in an existing codebase.
 
 ```js
-import fsdPlugin from 'eslint-plugin-fsd-lint';
+import fsdPlugin from "eslint-plugin-fsd-lint";
 
-export default [
-  fsdPlugin.configs.base,
-];
+export default [fsdPlugin.configs.base];
 ```
 
 ### Manual Configuration
@@ -92,7 +86,7 @@ export default [
 Use manual configuration when you want fine-grained control over each rule.
 
 ```js
-import fsdPlugin from 'eslint-plugin-fsd-lint';
+import fsdPlugin from "eslint-plugin-fsd-lint";
 
 export default [
   {
@@ -100,13 +94,13 @@ export default [
       fsd: fsdPlugin,
     },
     rules: {
-      'fsd/forbidden-imports': 'error',
-      'fsd/no-relative-imports': 'error',
-      'fsd/no-public-api-sidestep': 'error',
-      'fsd/no-cross-slice-dependency': 'error',
-      'fsd/no-ui-in-business-logic': 'error',
-      'fsd/no-global-store-imports': 'error',
-      'fsd/ordered-imports': 'warn',
+      "fsd/forbidden-imports": "error",
+      "fsd/no-relative-imports": "error",
+      "fsd/no-public-api-sidestep": "error",
+      "fsd/no-cross-slice-dependency": "error",
+      "fsd/no-ui-in-business-logic": "error",
+      "fsd/no-global-store-imports": "error",
+      "fsd/ordered-imports": "warn",
     },
   },
 ];
@@ -129,20 +123,20 @@ export default [
 
 Several rules support the same core options.
 
-| Option | Purpose | Example |
-| --- | --- | --- |
-| `alias` | Defines the import alias format for your project. | `{ value: '@', withSlash: false }` |
-| `rootPath` | Tells the plugin where the FSD tree starts in the absolute file path. Useful for monorepos or nested apps. | `'/apps/web/src/'` |
-| `folderPattern` | Supports numbered or customized layer directory names. | `{ enabled: true, regex: '^(\\d+_)?(.*)', extractionGroup: 2 }` |
-| `testFilesPatterns` | Allows test files to bypass specific architectural rules. | `['**/*.test.*', '**/*.spec.*']` |
-| `ignoreImportPatterns` | Skips selected import paths for a rule. | `['/types$', '^virtual:']` |
+| Option                 | Purpose                                                                                                    | Example                                                         |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `alias`                | Defines the import alias format for your project.                                                          | `{ value: '@', withSlash: false }`                              |
+| `rootPath`             | Tells the plugin where the FSD tree starts in the absolute file path. Useful for monorepos or nested apps. | `'/apps/web/src/'`                                              |
+| `folderPattern`        | Supports numbered or customized layer directory names.                                                     | `{ enabled: true, regex: '^(\\d+_)?(.*)', extractionGroup: 2 }` |
+| `testFilesPatterns`    | Allows test files to bypass specific architectural rules.                                                  | `['**/*.test.*', '**/*.spec.*']`                                |
+| `ignoreImportPatterns` | Skips selected import paths for a rule.                                                                    | `['/types$', '^virtual:']`                                      |
 
 ### `rootPath` Example
 
 If your project does not start directly at `/src/`, set `rootPath` so file-path based rules can still resolve the current layer and slice correctly.
 
 ```js
-import fsdPlugin from 'eslint-plugin-fsd-lint';
+import fsdPlugin from "eslint-plugin-fsd-lint";
 
 export default [
   {
@@ -150,9 +144,15 @@ export default [
       fsd: fsdPlugin,
     },
     rules: {
-      'fsd/forbidden-imports': ['error', { rootPath: '/apps/storefront/src/' }],
-      'fsd/no-cross-slice-dependency': ['error', { rootPath: '/apps/storefront/src/' }],
-      'fsd/no-ui-in-business-logic': ['error', { rootPath: '/apps/storefront/src/' }],
+      "fsd/forbidden-imports": ["error", { rootPath: "/apps/storefront/src/" }],
+      "fsd/no-cross-slice-dependency": [
+        "error",
+        { rootPath: "/apps/storefront/src/" },
+      ],
+      "fsd/no-ui-in-business-logic": [
+        "error",
+        { rootPath: "/apps/storefront/src/" },
+      ],
     },
   },
 ];
@@ -172,7 +172,7 @@ The value should match a stable segment inside the absolute path ESLint sees for
 ## Advanced Configuration
 
 ```js
-import fsdPlugin from 'eslint-plugin-fsd-lint';
+import fsdPlugin from "eslint-plugin-fsd-lint";
 
 export default [
   {
@@ -180,39 +180,39 @@ export default [
       fsd: fsdPlugin,
     },
     rules: {
-      'fsd/forbidden-imports': [
-        'error',
+      "fsd/forbidden-imports": [
+        "error",
         {
-          rootPath: '/apps/web/src/',
+          rootPath: "/apps/web/src/",
           alias: {
-            value: '@',
+            value: "@",
             withSlash: false,
           },
           folderPattern: {
             enabled: true,
-            regex: '^(\\d+_)?(.*)',
+            regex: "^(\\d+_)?(.*)",
             extractionGroup: 2,
           },
         },
       ],
-      'fsd/no-cross-slice-dependency': [
-        'error',
+      "fsd/no-cross-slice-dependency": [
+        "error",
         {
-          rootPath: '/apps/web/src/',
+          rootPath: "/apps/web/src/",
           featuresOnly: false,
           allowTypeImports: true,
         },
       ],
-      'fsd/no-ui-in-business-logic': [
-        'error',
+      "fsd/no-ui-in-business-logic": [
+        "error",
         {
-          rootPath: '/apps/web/src/',
-          businessLogicLayers: ['model', 'api', 'lib'],
-          uiLayers: ['ui', 'widgets', 'features'],
+          rootPath: "/apps/web/src/",
+          businessLogicLayers: ["model", "api", "lib"],
+          uiLayers: ["ui", "widgets", "features"],
         },
       ],
-      'fsd/no-relative-imports': [
-        'error',
+      "fsd/no-relative-imports": [
+        "error",
         {
           allowSameSlice: true,
           allowTypeImports: false,
@@ -277,15 +277,15 @@ src/
 
 ## Rules
 
-| Rule | What it protects | Key options |
-| --- | --- | --- |
-| `fsd/forbidden-imports` | Layer direction and invalid layer-to-layer imports | `alias`, `rootPath`, `folderPattern`, `ignoreImportPatterns` |
-| `fsd/no-relative-imports` | Relative imports across slices or layers | `allowSameSlice`, `allowTypeImports`, `ignoreImportPatterns` |
-| `fsd/no-public-api-sidestep` | Direct access to internal modules | `publicApi`, `ignoreImportPatterns` |
-| `fsd/no-cross-slice-dependency` | Direct dependencies between slices in the same layer | `rootPath`, `featuresOnly`, `allowTypeImports`, `excludeLayers` |
-| `fsd/no-ui-in-business-logic` | UI imports inside model/api/lib code | `rootPath`, `uiLayers`, `businessLogicLayers`, `allowTypeImports` |
-| `fsd/no-global-store-imports` | Direct store imports | `ignoreImportPatterns` |
-| `fsd/ordered-imports` | Stable FSD import ordering | no options |
+| Rule                            | What it protects                                     | Key options                                                       |
+| ------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------- |
+| `fsd/forbidden-imports`         | Layer direction and invalid layer-to-layer imports   | `alias`, `rootPath`, `folderPattern`, `ignoreImportPatterns`      |
+| `fsd/no-relative-imports`       | Relative imports across slices or layers             | `allowSameSlice`, `allowTypeImports`, `ignoreImportPatterns`      |
+| `fsd/no-public-api-sidestep`    | Direct access to internal modules                    | `publicApi`, `ignoreImportPatterns`                               |
+| `fsd/no-cross-slice-dependency` | Direct dependencies between slices in the same layer | `rootPath`, `featuresOnly`, `allowTypeImports`, `excludeLayers`   |
+| `fsd/no-ui-in-business-logic`   | UI imports inside model/api/lib code                 | `rootPath`, `uiLayers`, `businessLogicLayers`, `allowTypeImports` |
+| `fsd/no-global-store-imports`   | Direct store imports                                 | `ignoreImportPatterns`                                            |
+| `fsd/ordered-imports`           | Stable FSD import ordering                           | no options                                                        |
 
 ---
 
@@ -297,11 +297,11 @@ src/
 // features/auth/model/service.ts
 
 // ✅ allowed
-import { getUser } from '@entities/user';
-import { Button } from '@shared/ui/Button';
+import { getUser } from "@entities/user";
+import { Button } from "@shared/ui/Button";
 
 // ❌ forbidden
-import { LoginPage } from '@pages/login';
+import { LoginPage } from "@pages/login";
 ```
 
 ### `fsd/no-relative-imports`
@@ -310,26 +310,26 @@ import { LoginPage } from '@pages/login';
 // features/auth/ui/LoginForm.tsx
 
 // ✅ same-slice relative import
-import { validateCredentials } from '../lib/validation';
+import { validateCredentials } from "../lib/validation";
 
 // ❌ cross-layer relative import
-import { store } from '../../../app/store';
+import { store } from "../../../app/store";
 
 // ✅ cross-layer alias import
-import { store } from '@app/store';
+import { store } from "@app/store";
 ```
 
 ### `fsd/no-public-api-sidestep`
 
 ```js
 // ✅ public API import
-import { authModel } from '@features/auth';
+import { authModel } from "@features/auth";
 
 // ✅ segment-level public import
-import { userModel } from '@entities/user/model';
+import { userModel } from "@entities/user/model";
 
 // ❌ deep internal file import
-import { authSlice } from '@features/auth/model/slice';
+import { authSlice } from "@features/auth/model/slice";
 ```
 
 ### `fsd/no-cross-slice-dependency`
@@ -338,10 +338,10 @@ import { authSlice } from '@features/auth/model/slice';
 // features/auth/model/service.ts
 
 // ❌ direct dependency on another feature slice
-import { profileService } from '@features/profile/model/service';
+import { profileService } from "@features/profile/model/service";
 
 // ✅ dependency through lower layer
-import { getProfile } from '@entities/profile';
+import { getProfile } from "@entities/profile";
 ```
 
 ### `fsd/no-ui-in-business-logic`
@@ -350,39 +350,39 @@ import { getProfile } from '@entities/profile';
 // entities/user/model/user.ts
 
 // ❌ business logic importing UI
-import { Header } from '@widgets/header';
+import { Header } from "@widgets/header";
 
 // ✅ business logic importing data or helpers
-import { formatDate } from '@shared/lib/date';
+import { formatDate } from "@shared/lib/date";
 ```
 
 ### `fsd/no-global-store-imports`
 
 ```js
 // ❌ direct store import
-import { store } from '@app/store';
+import { store } from "@app/store";
 
 // ✅ use app wiring, hooks, or selectors instead
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 ```
 
 ### `fsd/ordered-imports`
 
 ```js
 // Before
-import { processPayment } from '@features/payment';
-import { getUser } from '@entities/user';
-import { formatCurrency } from '@shared/lib/currency';
-import { useStore } from '@app/store';
+import { processPayment } from "@features/payment";
+import { getUser } from "@entities/user";
+import { formatCurrency } from "@shared/lib/currency";
+import { useStore } from "@app/store";
 
 // After --fix
-import { useStore } from '@app/store';
+import { useStore } from "@app/store";
 
-import { processPayment } from '@features/payment';
+import { processPayment } from "@features/payment";
 
-import { getUser } from '@entities/user';
+import { getUser } from "@entities/user";
 
-import { formatCurrency } from '@shared/lib/currency';
+import { formatCurrency } from "@shared/lib/currency";
 ```
 
 ---

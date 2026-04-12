@@ -8,33 +8,35 @@ import { isRelativePath, isTestFile, normalizePath } from '../utils/path-utils.j
 
 export default {
   meta: {
-    type: 'problem',
+    type: "problem",
     docs: {
-      description: 'Prevents relative imports between slices. Use absolute paths with aliases instead.',
+      description:
+        "Prevents relative imports between slices. Use absolute paths with aliases instead.",
       recommended: true,
     },
     messages: {
-      noRelativeImport: '🚨 Relative imports are not allowed. Use absolute imports with aliases instead.',
+      noRelativeImport:
+        "🚨 Relative imports are not allowed. Use absolute imports with aliases instead.",
     },
     schema: [
       {
-        type: 'object',
+        type: "object",
         properties: {
           testFilesPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           ignoreImportPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           allowTypeImports: {
-            type: 'boolean',
-            description: 'Allow relative imports for type-only imports',
+            type: "boolean",
+            description: "Allow relative imports for type-only imports",
           },
           allowSameSlice: {
-            type: 'boolean',
-            description: 'Allow relative imports within the same slice',
+            type: "boolean",
+            description: "Allow relative imports within the same slice",
           },
         },
         additionalProperties: false,
@@ -51,7 +53,8 @@ export default {
     const allowTypeImports = options.allowTypeImports || false;
 
     // Allow same slice imports if configured (default: true)
-    const allowSameSlice = options.allowSameSlice !== undefined ? options.allowSameSlice : true;
+    const allowSameSlice =
+      options.allowSameSlice !== undefined ? options.allowSameSlice : true;
 
     // Helper function to check if import is within the same slice
     function isSameSlice(importPath, currentFilePath) {
@@ -61,7 +64,9 @@ export default {
       // Get the base directory of the current file
       const currentDir = path.posix.dirname(normalizedCurrentPath);
       // Resolve the import path relative to the current file
-      const resolvedImportPath = path.posix.normalize(path.posix.resolve(currentDir, importPath));
+      const resolvedImportPath = path.posix.normalize(
+        path.posix.resolve(currentDir, importPath),
+      );
 
       // FSD layers we need to check
       const fsdLayers = ['app', 'processes', 'pages', 'widgets', 'features', 'entities', 'shared'];
@@ -70,7 +75,7 @@ export default {
       const singleLayerModules = ['app', 'shared'];
 
       // Find layer and slice from current file path
-      const currentPathParts = normalizedCurrentPath.split('/');
+      const currentPathParts = normalizedCurrentPath.split("/");
       let currentLayer = null;
       let currentSlice = null;
       let layerIndex = -1;
@@ -80,7 +85,10 @@ export default {
           currentLayer = currentPathParts[i];
           layerIndex = i;
           // The slice is the next part after the layer (if it exists and layer has slices)
-          if (i + 1 < currentPathParts.length && !singleLayerModules.includes(currentLayer)) {
+          if (
+            i + 1 < currentPathParts.length &&
+            !singleLayerModules.includes(currentLayer)
+          ) {
             currentSlice = currentPathParts[i + 1];
           }
           break;
@@ -97,7 +105,7 @@ export default {
       }
 
       // Find layer and slice from resolved import path
-      const resolvedPathParts = resolvedImportPath.split('/');
+      const resolvedPathParts = resolvedImportPath.split("/");
       let importLayer = null;
       let importSlice = null;
       let importLayerIndex = -1;
@@ -107,7 +115,10 @@ export default {
           importLayer = resolvedPathParts[i];
           importLayerIndex = i;
           // The slice is the next part after the layer (if it exists and layer has slices)
-          if (i + 1 < resolvedPathParts.length && !singleLayerModules.includes(importLayer)) {
+          if (
+            i + 1 < resolvedPathParts.length &&
+            !singleLayerModules.includes(importLayer)
+          ) {
             importSlice = resolvedPathParts[i + 1];
           }
           break;
@@ -118,7 +129,9 @@ export default {
       if (!importLayer || importLayerIndex === -1) {
         // Check if the resolved path is still within the current layer/slice structure
         if (currentSlice) {
-          return resolvedImportPath.includes(`/${currentLayer}/${currentSlice}/`);
+          return resolvedImportPath.includes(
+            `/${currentLayer}/${currentSlice}/`,
+          );
         } else {
           // For single-layer modules without slices
           return resolvedImportPath.includes(`/${currentLayer}/`);
@@ -126,7 +139,10 @@ export default {
       }
 
       // For single-layer modules, just check if layers match
-      if (singleLayerModules.includes(currentLayer) || singleLayerModules.includes(importLayer)) {
+      if (
+        singleLayerModules.includes(currentLayer) ||
+        singleLayerModules.includes(importLayer)
+      ) {
         return currentLayer === importLayer;
       }
 
@@ -159,7 +175,7 @@ export default {
         }
 
         // Skip type-only imports if configured
-        if (allowTypeImports && node.importKind === 'type') {
+        if (allowTypeImports && node.importKind === "type") {
           return;
         }
 
@@ -170,12 +186,12 @@ export default {
 
         context.report({
           node,
-          messageId: 'noRelativeImport',
+          messageId: "noRelativeImport",
         });
       },
       CallExpression(node) {
         // Handle dynamic imports
-        if (node.callee.type === 'Import') {
+        if (node.callee.type === "Import") {
           const importPath = node.arguments[0].value;
 
           // Skip if not a relative import
@@ -208,7 +224,7 @@ export default {
 
           context.report({
             node,
-            messageId: 'noRelativeImport',
+            messageId: "noRelativeImport",
           });
         }
       },

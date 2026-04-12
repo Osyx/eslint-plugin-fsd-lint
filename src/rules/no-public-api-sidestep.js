@@ -7,10 +7,10 @@ import { extractLayerFromImportPath, isTestFile, normalizePath } from '../utils/
 
 export default {
   meta: {
-    type: 'problem',
+    type: "problem",
     docs: {
       description:
-        'Prevents direct imports from internal files of features, widgets, or entities. All imports must go through index files (public API).',
+        "Prevents direct imports from internal files of features, widgets, or entities. All imports must go through index files (public API).",
       recommended: true,
     },
     messages: {
@@ -19,44 +19,45 @@ export default {
     },
     schema: [
       {
-        type: 'object',
+        type: "object",
         properties: {
           alias: {
             oneOf: [
-              { type: 'string' },
+              { type: "string" },
               {
-                type: 'object',
+                type: "object",
                 properties: {
-                  value: { type: 'string' },
-                  withSlash: { type: 'boolean' },
+                  value: { type: "string" },
+                  withSlash: { type: "boolean" },
                 },
-                required: ['value'],
+                required: ["value"],
                 additionalProperties: false,
               },
             ],
           },
           layers: {
-            type: 'array',
-            items: { type: 'string' },
-            description: "Layers that require using public API (default: ['features', 'entities', 'widgets'])",
+            type: "array",
+            items: { type: "string" },
+            description:
+              "Layers that require using public API (default: ['features', 'entities', 'widgets'])",
           },
           publicApiFiles: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
             description:
               "Files that are considered public API (default: ['index.ts', 'index.tsx', 'index.js', 'index.jsx'])",
           },
           testFilesPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           ignoreImportPatterns: {
-            type: 'array',
-            items: { type: 'string' },
+            type: "array",
+            items: { type: "string" },
           },
           allowTypeImports: {
-            type: 'boolean',
-            description: 'Allow direct imports of type definitions',
+            type: "boolean",
+            description: "Allow direct imports of type definitions",
           },
         },
         additionalProperties: false,
@@ -71,11 +72,16 @@ export default {
 
     // Layers that require public API
     const restrictedLayers = options.layers ||
-      config.publicApi?.enforceForLayers || ['features', 'entities', 'widgets'];
+      config.publicApi?.enforceForLayers || ["features", "entities", "widgets"];
 
     // Files that are considered public API
     const publicApiFiles = options.publicApiFiles ||
-      config.publicApi?.fileNames || ['index.ts', 'index.tsx', 'index.js', 'index.jsx'];
+      config.publicApi?.fileNames || [
+        "index.ts",
+        "index.tsx",
+        "index.js",
+        "index.jsx",
+      ];
 
     // Allow type imports if configured
     const allowTypeImports = options.allowTypeImports || false;
@@ -101,12 +107,12 @@ export default {
         }
 
         // Skip relative imports
-        if (importPath.startsWith('.')) {
+        if (importPath.startsWith(".")) {
           return;
         }
 
         // Skip type-only imports if configured
-        if (allowTypeImports && node.importKind === 'type') {
+        if (allowTypeImports && node.importKind === "type") {
           return;
         }
 
@@ -123,13 +129,13 @@ export default {
         const isPublicApiImport = publicApiFiles.some((apiFile) => {
           return (
             normalizedImportPath.endsWith(`/${apiFile}`) ||
-            normalizedImportPath.endsWith(`/${apiFile.replace('.ts', '')}`)
+            normalizedImportPath.endsWith(`/${apiFile.replace(".ts", "")}`)
           );
         });
 
         // Also check if it's importing from just the slice (without specific file)
         // Example: @features/auth vs @features/auth/model/slice
-        const pathParts = normalizedImportPath.split('/');
+        const pathParts = normalizedImportPath.split("/");
         const layerIndex = pathParts.findIndex((part) => {
           const normalizedPart = normalizePath(part);
           // Check if the part contains the layer (e.g., @entities contains entities)
@@ -139,11 +145,13 @@ export default {
         });
 
         // If import only specifies layer and slice, it's considered a public API import
-        const isSliceRootImport = layerIndex >= 0 && pathParts.length === layerIndex + 2;
+        const isSliceRootImport =
+          layerIndex >= 0 && pathParts.length === layerIndex + 2;
 
         // Check if it's importing from a segment level (e.g., @entities/user/model, @entities/user/ui, @entities/user/anySegmentName)
         // Any segment name is allowed in FSD architecture
-        const isSegmentImport = layerIndex >= 0 && pathParts.length === layerIndex + 3;
+        const isSegmentImport =
+          layerIndex >= 0 && pathParts.length === layerIndex + 3;
 
         // If either a public API file, slice root, or segment root, it's valid
         if (isPublicApiImport || isSliceRootImport || isSegmentImport) {
@@ -152,7 +160,7 @@ export default {
 
         context.report({
           node,
-          messageId: 'noDirectImport',
+          messageId: "noDirectImport",
           data: {
             importPath,
           },
@@ -160,11 +168,11 @@ export default {
       },
       CallExpression(node) {
         // Handle dynamic imports
-        if (node.callee.type === 'Import') {
+        if (node.callee.type === "Import") {
           const importPath = node.arguments[0].value;
 
           // Skip relative imports
-          if (importPath.startsWith('.')) {
+          if (importPath.startsWith(".")) {
             return;
           }
 
@@ -196,12 +204,12 @@ export default {
           const isPublicApiImport = publicApiFiles.some((apiFile) => {
             return (
               normalizedImportPath.endsWith(`/${apiFile}`) ||
-              normalizedImportPath.endsWith(`/${apiFile.replace('.ts', '')}`)
+              normalizedImportPath.endsWith(`/${apiFile.replace(".ts", "")}`)
             );
           });
 
           // Also check if it's importing from just the slice (without specific file)
-          const pathParts = normalizedImportPath.split('/');
+          const pathParts = normalizedImportPath.split("/");
           const layerIndex = pathParts.findIndex((part) => {
             const normalizedPart = normalizePath(part);
             // Check if the part contains the layer (e.g., @entities contains entities)
@@ -211,11 +219,13 @@ export default {
           });
 
           // If import only specifies layer and slice, it's considered a public API import
-          const isSliceRootImport = layerIndex >= 0 && pathParts.length === layerIndex + 2;
+          const isSliceRootImport =
+            layerIndex >= 0 && pathParts.length === layerIndex + 2;
 
           // Check if it's importing from a segment level (e.g., @entities/user/model, @entities/user/ui, @entities/user/anySegmentName)
           // Any segment name is allowed in FSD architecture
-          const isSegmentImport = layerIndex >= 0 && pathParts.length === layerIndex + 3;
+          const isSegmentImport =
+            layerIndex >= 0 && pathParts.length === layerIndex + 3;
 
           // If either a public API file, slice root, or segment root, it's valid
           if (isPublicApiImport || isSliceRootImport || isSegmentImport) {
@@ -224,7 +234,7 @@ export default {
 
           context.report({
             node,
-            messageId: 'noDirectImport',
+            messageId: "noDirectImport",
             data: {
               importPath,
             },
